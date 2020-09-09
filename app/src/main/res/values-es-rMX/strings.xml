@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Enfoque</string>
+    <string name="tab_text_1">Proyectos</string>
+    <string name="tab_text_2">Hoy</string>
+    <string name="add_button">+</string>
+    <string name="addProject">+</string>
+    <string name="ProjectName">Nombre del Proyecto</string>
+    <string name="Results">Resultados</string>
+    <string name="Goals90">Objetivos a 90 días</string>
+    <string name="Goals2W">Objetivos a 2 semanas</string>
+    <string name="Actions">Acciones</string>
+    <string name="Notes">Notas</string>
+    <string name="AddProject">Agregar</string>
+    <string name="SucessfullyAdded">Guardado exitosamente</string>
+    <string name="FillRequiredFields">Favor de llenar los campos requeridos</string>
+</resources>
