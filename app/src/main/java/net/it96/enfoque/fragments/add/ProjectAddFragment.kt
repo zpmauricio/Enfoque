@@ -7,26 +7,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.fragment_add.*
-import kotlinx.android.synthetic.main.fragment_add.view.*
+import kotlinx.android.synthetic.main.project_add.*
+import kotlinx.android.synthetic.main.project_add.view.*
 import net.it96.enfoque.R
-import net.it96.enfoque.data.Project
-import net.it96.enfoque.data.ProjectViewModel
+import net.it96.enfoque.database.Project
+import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.viewmodels.ProjectViewModel
+import net.it96.enfoque.viewmodels.ViewModelFactory
+import timber.log.Timber
 
-class AddFragment : Fragment() {
+class ProjectAddFragment : Fragment() {
 
-    private lateinit var mProjectViewModel: ProjectViewModel
+//    private lateinit var mProjectViewModel: ProjectViewModel
+    private val mProjectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
+        ProjectRepositoryImpl()) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_add, container, false)
+        val view =  inflater.inflate(R.layout.project_add, container, false)
 
-        mProjectViewModel = ViewModelProvider(this).get(ProjectViewModel::class.java)
+//        mProjectViewModel = ViewModelProvider(this).get(ProjectViewModel::class.java)
 
         view.addProject_btn.setOnClickListener {
             insertDataToDatabase()
@@ -44,15 +49,21 @@ class AddFragment : Fragment() {
         val notes = addNotes.text.toString()
 
         if (inputCheck(projectName, results, goals90, goals2W, actions, notes)) {
-            // Create Project Object
-            val project = Project(0, projectName, results, goals90, goals2W, actions, notes)
 
-            // Add Data to Database
+            if (projectName.isEmpty())
+            {
+                addProjectName.error = "Please enter a name"
+                return
+            }
+
+            // Create new project
+            val project = Project("0", projectName, results, goals90, goals2W, actions, notes).apply { }
+
+            // Call View Model and send the data to be stored
             mProjectViewModel.addProject(project)
-            Toast.makeText(requireContext(), R.string.SucessfullyAdded, Toast.LENGTH_LONG).show()
 
             // Navigate Back
-            findNavController().navigate(R.id.action_addFragment_to_listFragment2)
+            findNavController().navigate(R.id.action_addFragment_to_listFragment)
         }
         else
         {
@@ -62,6 +73,11 @@ class AddFragment : Fragment() {
 
     private fun inputCheck(projectName: String, results: String, goals90: String, goals2W: String, actions: String, notes: String): Boolean {
         return !(TextUtils.isEmpty(projectName) && TextUtils.isEmpty(results) && TextUtils.isEmpty(goals90) && TextUtils.isEmpty(goals2W) && TextUtils.isEmpty(actions) && TextUtils.isEmpty(notes))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.i("***MZP***")
     }
 
 }

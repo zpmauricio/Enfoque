@@ -12,6 +12,9 @@
     <string name="Actions">Acciones</string>
     <string name="Notes">Notas</string>
     <string name="AddProject">Agregar</string>
-    <string name="SucessfullyAdded">Guardado exitosamente</string>
+    <string name="SuccessfullyAdded">Guardado exitosamente</string>
     <string name="FillRequiredFields">Favor de llenar los campos requeridos</string>
+    <string name="hello_blank_fragment">Hola blank fragment</string>
+    <string name="settings">Configuraciones</string>
+    <string name="projectImage">Imagen del Proyecto</string>
 </resources>

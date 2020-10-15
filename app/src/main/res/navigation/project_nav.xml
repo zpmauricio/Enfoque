@@ -3,23 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/project_nav"
-    app:startDestination="@id/listFragment">
+    app:startDestination="@id/projectListFragment">
+
     <fragment
-        android:id="@+id/listFragment"
-        android:name="net.it96.enfoque.fragments.list.ListFragment"
+        android:id="@+id/projectListFragment"
+        android:name="net.it96.enfoque.fragments.list.ProjectListFragment"
         android:label="@string/tab_text_1"
-        tools:layout="@layout/fragment_list">
+        tools:layout="@layout/fragment_project_list">
         <action
-            android:id="@+id/action_listFragment_to_addFragment2"
-            app:destination="@id/addFragment" />
+            android:id="@+id/action_listFragment_to_addFragment"
+            app:destination="@id/projectAddFragment" />
+        <action
+            android:id="@+id/action_projectListFragment_to_projectDetailFragment"
+            app:destination="@id/projectDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/addFragment"
-        android:name="net.it96.enfoque.fragments.add.AddFragment"
+        android:id="@+id/projectAddFragment"
+        android:name="net.it96.enfoque.fragments.add.ProjectAddFragment"
         android:label="@string/AddProject"
-        tools:layout="@layout/fragment_add">
+        tools:layout="@layout/project_add">
         <action
-            android:id="@+id/action_addFragment_to_listFragment2"
-            app:destination="@id/listFragment" />
+            android:id="@+id/action_addFragment_to_listFragment"
+            app:destination="@id/projectListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fragment_today"
+        android:name="net.it96.enfoque.fragments.today.TodayFragment"
+        android:label="fragment_today"
+        tools:layout="@layout/fragment_today" />
+    <fragment
+        android:id="@+id/projectDetailFragment"
+        android:name="net.it96.enfoque.fragments.ProjectDetailFragment"
+        android:label="@string/ProjectName"
+        tools:layout="@layout/fragment_project_detail" />
 </navigation>

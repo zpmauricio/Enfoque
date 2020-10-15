@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "427718235882",
+    "firebase_url": "https://enfoque-2956c.firebaseio.com",
+    "project_id": "enfoque-2956c",
+    "storage_bucket": "enfoque-2956c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:427718235882:android:f8b43a0600717de3c12993",
+        "android_client_info": {
+          "package_name": "net.it96.enfoque"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "427718235882-hk2a2l4otm54jrk3da1eqtsu13clav7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOz-IV3HghKewCsTVz4JsUDEFY4cVthTo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "427718235882-hk2a2l4otm54jrk3da1eqtsu13clav7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
