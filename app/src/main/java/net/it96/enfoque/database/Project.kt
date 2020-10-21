@@ -5,12 +5,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Project (
-    var id: String = "",
-    var image: String = "",
+    var imageUrl: String = "",
     var name: String = "",
     var results: String = "",
-    var goals90: String = "",
-    var goals2W: String = "",
+    var goals: ArrayList<NinetyDayGoal> = arrayListOf(),
     var actions: String = "",
-    var notes: String = ""
+    var notes: String = "",
 ) : Parcelable

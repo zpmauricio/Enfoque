@@ -1,5 +1,6 @@
 package net.it96.enfoque.database
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,39 +16,11 @@ import timber.log.Timber
 class ProjectRepositoryImpl : ProjectRepository {
 
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val user = FirebaseAuth.getInstance().currentUser
 
     init {
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
     }
-
-//    fun getAllProjectsData(): LiveData<MutableList<Project>> {
-//        val mutableData = MutableLiveData<MutableList<Project>>()
-//        firestore.collection("projects").addSnapshotListener { snapshot, firestoreError ->
-//            if (firestoreError != null) {
-//                Timber.e("***MZP*** Error en firestore: + ${firestoreError.message}")
-//                return@addSnapshotListener
-//            }
-//            val listData = mutableListOf<Project>()
-//            for (document in snapshot!!) {
-//                val project = document.toObject(Project::class.java)
-//                listData.add(project)
-//            }
-//            mutableData.value = listData
-//        }
-//        return mutableData
-//    }
-
-//    @ExperimentalCoroutinesApi
-//    fun getAllProjectsData() : Flow<Resource<MutableList<Project>>> = callbackFlow {
-//        val projectListCollection = firestore.collection("projects")
-//        val suscription = projectListCollection.addSnapshotListener { snapshot, firestoreError ->
-//            if(firestoreError != null) {
-//                channel.close(firestoreError?.cause)
-//            }
-//
-//            val projectList = snapshot
-//        }
-//    }
 
     @ExperimentalCoroutinesApi
     suspend fun getProjectData(document: String) : Flow<Resource<Project>> = callbackFlow {
@@ -63,46 +36,27 @@ class ProjectRepositoryImpl : ProjectRepository {
 
         awaitClose { suscription.remove() }
     }
-//    suspend fun getProjectData(document: String): Flow<Resource<Project>> {
-//        val projectData = firestore.collection("projects").document(document).get().await()
-//        val selectedProject = projectData.toObject(Project::class.java)
-//
-//        return Resource.Success(selectedProject!!)
-//    }
 
     // Receives the data and stores it on Firestore
     fun save(project: Project) {
-        firestore.collection("projects")
-            .document("user2")
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(project.name)
             .set(project)
             .addOnSuccessListener {
-                Timber.i("Document(Project) saved")
+                Timber.i("***MZP*** Document(Project) saved")
             }
             .addOnFailureListener {
-                Timber.i("Saved failed")
-            }
-    }
-
-    fun setUserData(name: String, email: String, password: String) {
-
-        val userHashMap = hashMapOf(
-            "name" to name,
-            "email" to email,
-            "password" to password
-        )
-
-        firestore.collection("users")
-            .add(userHashMap)
-            .addOnSuccessListener {
-                Timber.i("User saved. ID = %s", it.id)
+                Timber.i("***MZP*** Saved failed")
             }
     }
 
     @ExperimentalCoroutinesApi
     override suspend fun getProjectList(): Flow<Resource<List<Project>>> = callbackFlow {
         Timber.i("***MZP*** getProjectList()")
-        val projectListCollection = firestore.collection("users").document("mauzav").collection("Projects")
-        val suscription = projectListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+        val projectListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects")
+        val subscription = projectListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
                 val projectList = collectionSnapshot.toObjects(Project::class.java)
@@ -114,6 +68,25 @@ class ProjectRepositoryImpl : ProjectRepository {
             }
         }
 
-        awaitClose { suscription.remove() }
+        awaitClose { subscription.remove() }
+    }
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getGoalsList(selectedProject: String): Flow<Resource<List<NinetyDayGoal>>> = callbackFlow {
+        Timber.i("***MZP*** getGoalsList()")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("90DayGoals")
+        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+            if(!collectionSnapshot!!.isEmpty) {
+                Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
+                val goalsList = collectionSnapshot.toObjects(NinetyDayGoal::class.java)
+                Timber.i("***MZP*** goalsList: %s", goalsList.toString())
+                offer(Resource.Success(goalsList))
+            }
+            if(firestoreError != null) {
+                channel.close(firestoreError.cause)
+            }
+        }
+
+        awaitClose { subscription.remove() }
     }
 }

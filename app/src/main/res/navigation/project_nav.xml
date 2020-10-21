@@ -35,5 +35,14 @@
         android:id="@+id/projectDetailFragment"
         android:name="net.it96.enfoque.fragments.ProjectDetailFragment"
         android:label="@string/ProjectName"
-        tools:layout="@layout/fragment_project_detail" />
+        tools:layout="@layout/fragment_project_detail" >
+        <action
+            android:id="@+id/action_projectDetailFragment_to_ninetyDayGoalsFragment"
+            app:destination="@id/ninetyDayGoalsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/ninetyDayGoalsFragment"
+        android:name="net.it96.enfoque.fragments.ninetydaygoals.NinetyDayGoalsFragment"
+        android:label="fragment_ninety_day_goals"
+        tools:layout="@layout/fragment_ninety_day_goals" />
 </navigation>

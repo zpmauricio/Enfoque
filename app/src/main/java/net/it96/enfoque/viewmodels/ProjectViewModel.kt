@@ -9,26 +9,37 @@ import kotlinx.coroutines.launch
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepository
 import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.vo.Resource
 import timber.log.Timber
 
 /**
  * Clase para observar cambios en los datos
  */
-class ProjectViewModel(private val projectRepository : ProjectRepository) : ViewModel() {
+class ProjectViewModel(private val projectRepository : ProjectRepository, private val param : String) : ViewModel() {
 
     private val projectRepositoryImpl = ProjectRepositoryImpl()
 
     val getProjectList = liveData(Dispatchers.IO) {
-//        emit(Resource.Loading())
+        emit(Resource.Loading())
         try{
-            Timber.i("***MZP*** GET PROJECT LIST")
             projectRepository.getProjectList().collect {
                 emit(it)
             }
-            Timber.i("***MZP*** PROJECT LIST WAS OBTAINED")
         } catch (e: Exception) {
-//            emit(Resource.Failure(e))
+            emit(Resource.Failure(e))
             Timber.e("***MZP*** ERROR GETTING PROJECT LIST")
+        }
+    }
+
+    val getGoalsList = liveData(Dispatchers.IO) {
+        emit(Resource.Loading())
+        try{
+            projectRepository.getGoalsList(param).collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            emit(Resource.Failure(e))
+            Timber.e("***MZP*** ERROR GETTING GOALS LIST")
         }
     }
 

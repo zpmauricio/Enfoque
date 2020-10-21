@@ -16,13 +16,12 @@ import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
-import timber.log.Timber
 
 class ProjectAddFragment : Fragment() {
 
 //    private lateinit var mProjectViewModel: ProjectViewModel
     private val mProjectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
-        ProjectRepositoryImpl()) }
+        ProjectRepositoryImpl(), "") }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,13 +41,14 @@ class ProjectAddFragment : Fragment() {
 
     private fun insertDataToDatabase() {
         val projectName = addProjectName.text.toString()
-        val results = addResults.text.toString()
-        val goals90 = addGoals90.text.toString()
-        val goals2W = addGoals2W.text.toString()
-        val actions = addActions.text.toString()
-        val notes = addNotes.text.toString()
+//        val rdButton = if (rb_img1.isSelected) {img_project1} else if (rb_img2.isSelected) { img_project2 } else img_project3
+//        val results = addResults.text.toString()
+//        val goals90 = addGoals90.text.toString()
+//        val goals2W = addGoals2W.text.toString()
+//        val actions = addActions.text.toString()
+//        val notes = addNotes.text.toString()
 
-        if (inputCheck(projectName, results, goals90, goals2W, actions, notes)) {
+        if (inputCheck(projectName)) {
 
             if (projectName.isEmpty())
             {
@@ -57,7 +57,7 @@ class ProjectAddFragment : Fragment() {
             }
 
             // Create new project
-            val project = Project("0", projectName, results, goals90, goals2W, actions, notes).apply { }
+            val project = Project("", projectName, "", arrayListOf(), "", "").apply { }
 
             // Call View Model and send the data to be stored
             mProjectViewModel.addProject(project)
@@ -71,13 +71,8 @@ class ProjectAddFragment : Fragment() {
         }
     }
 
-    private fun inputCheck(projectName: String, results: String, goals90: String, goals2W: String, actions: String, notes: String): Boolean {
-        return !(TextUtils.isEmpty(projectName) && TextUtils.isEmpty(results) && TextUtils.isEmpty(goals90) && TextUtils.isEmpty(goals2W) && TextUtils.isEmpty(actions) && TextUtils.isEmpty(notes))
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.i("***MZP***")
+    private fun inputCheck(projectName: String): Boolean {
+        return !(TextUtils.isEmpty(projectName))
     }
 
 }

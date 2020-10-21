@@ -109,4 +109,13 @@ class ProjectActivity : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
+
+//    private fun signOut(){
+//        AuthUI.getInstance().signOut(this).addOnSuccessListener {
+//            startActivity(Intent(this, LoginActivity::class.java))
+//            finish()
+//        }.addOnFailureListener{
+//            Toast.makeText(this, "Ocurrio un error ${it.message}", Toast.LENGTH_SHORT).show()
+//        }
+//    }
 }

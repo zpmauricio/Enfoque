@@ -7,9 +7,35 @@
     android:padding="24dp"
     tools:context=".fragments.add.ProjectAddFragment">
 
+<!--    <TextView-->
+<!--        android:id="@+id/imgSelected"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text=""-->
+<!--        android:textSize="24sp"-->
+<!--        android:visibility="invisible"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        tools:layout_editor_absoluteX="44dp"-->
+<!--        tools:layout_editor_absoluteY="171dp"-->
+<!--        tools:text="Selected Image" />-->
+
+    <TextView
+        android:id="@+id/lbl_projectName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/ProjectName"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/addProjectName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.92" />
+
     <EditText
         android:id="@+id/addProjectName"
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="180dp"
@@ -17,73 +43,110 @@
         android:ems="10"
         android:hint="@string/ProjectName"
         android:inputType="textPersonName"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/ProjectName" />
 
-    <EditText
-        android:id="@+id/addResults"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:autofillHints="@string/Results"
-        android:ems="10"
-        android:hint="@string/Results"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/addProjectName"
-        app:layout_constraintTop_toTopOf="@+id/addProjectName" />
+<!--    <ImageView-->
+<!--        android:id="@+id/img_project1"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:src="@drawable/fui_idp_button_background_anonymous"-->
+<!--        app:layout_constraintStart_toStartOf="@id/addProjectName"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/addProjectName" />-->
 
-    <EditText
-        android:id="@+id/addGoals90"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:autofillHints="@string/Goals90"
-        android:ems="10"
-        android:hint="@string/Goals90"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addProjectName" />
+<!--    <ImageView-->
+<!--        android:id="@+id/img_project2"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:src="@drawable/ic_launcher_foreground"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/addProjectName"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/addProjectName" />-->
 
-    <EditText
-        android:id="@+id/addGoals2W"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/Goals2W"
-        android:autofillHints="@string/Goals2W"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/addGoals90"
-        app:layout_constraintTop_toTopOf="@+id/addGoals90" />
+<!--    <ImageView-->
+<!--        android:id="@+id/img_project3"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_marginTop="24dp"-->
+<!--        android:layout_marginEnd="24dp"-->
+<!--        android:contentDescription="TODO"-->
+<!--        android:src="@drawable/fui_idp_button_background_email"-->
+<!--        app:layout_constraintStart_toStartOf="@id/img_project1"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/img_project1" />-->
 
-    <EditText
-        android:id="@+id/addActions"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:autofillHints="@string/Actions"
-        android:ems="10"
-        android:hint="@string/Actions"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addGoals90" />
 
-    <EditText
-        android:id="@+id/addNotes"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/Notes"
-        android:autofillHints="@string/Notes"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/addActions"
-        app:layout_constraintTop_toTopOf="@+id/addActions" />
+    <!--    <EditText-->
+    <!--        android:id="@+id/addResults"-->
+    <!--        android:layout_width="150dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:autofillHints="@string/Results"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="@string/Results"-->
+    <!--        android:inputType="textPersonName"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.5"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/addProjectName"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/addProjectName" />-->
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/addGoals90"-->
+    <!--        android:layout_width="150dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="16dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:autofillHints="@string/Goals90"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="@string/Goals90"-->
+    <!--        android:inputType="textPersonName"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/addProjectName" />-->
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/addGoals2W"-->
+    <!--        android:layout_width="150dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="@string/Goals2W"-->
+    <!--        android:autofillHints="@string/Goals2W"-->
+    <!--        android:inputType="textPersonName"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.5"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/addGoals90"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/addGoals90" />-->
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/addActions"-->
+    <!--        android:layout_width="150dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginStart="16dp"-->
+    <!--        android:layout_marginTop="16dp"-->
+    <!--        android:autofillHints="@string/Actions"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="@string/Actions"-->
+    <!--        android:inputType="textPersonName"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/addGoals90" />-->
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/addNotes"-->
+    <!--        android:layout_width="150dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:ems="10"-->
+    <!--        android:hint="@string/Notes"-->
+    <!--        android:autofillHints="@string/Notes"-->
+    <!--        android:inputType="textPersonName"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.5"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/addActions"-->
+    <!--        app:layout_constraintTop_toTopOf="@+id/addActions" />-->
+
 
     <Button
         android:id="@+id/addProject_btn"
@@ -94,7 +157,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addNotes"
         app:layout_constraintVertical_bias="0.10" />
+
+<!--    <RadioButton-->
+<!--        android:id="@+id/rb_img1"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text=""-->
+<!--        app:layout_constraintTop_toTopOf="@id/img_project1"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/img_project1"-->
+<!--        tools:layout_editor_absoluteX="3dp"-->
+<!--        tools:layout_editor_absoluteY="254dp" />-->
+
+<!--    <RadioButton-->
+<!--        android:id="@+id/rb_img2"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text=""-->
+<!--        app:layout_constraintTop_toTopOf="@id/img_project2"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/img_project2"-->
+<!--        tools:layout_editor_absoluteX="3dp"-->
+<!--        tools:layout_editor_absoluteY="254dp" />-->
+
+<!--    <RadioButton-->
+<!--        android:id="@+id/rb_img3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text=""-->
+<!--        app:layout_constraintTop_toTopOf="@id/img_project3"-->
+<!--        app:layout_constraintEnd_toStartOf="@id/img_project3"-->
+<!--        tools:layout_editor_absoluteX="3dp"-->
+<!--        tools:layout_editor_absoluteY="254dp" />-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

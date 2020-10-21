@@ -42,8 +42,8 @@ class ProjectListAdapter(
 
     inner class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindView(project: Project) {
-            Glide.with(context).load(project.image).centerCrop().into(itemView.projectImage)
-            itemView.projectId_txt.text = project.id
+            Glide.with(context).load(project.imageUrl).centerCrop().into(itemView.projectImage)
+//            itemView.projectId_txt.text = project.id
             itemView.projectName_txt.text = project.name
 //            itemView.projectResults_txt.text = project.results
 //            itemView.projectGoals90_txt.text = project.goals90

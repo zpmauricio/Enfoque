@@ -1,5 +1,6 @@
 package net.it96.enfoque.fragments.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.firebase.ui.auth.AuthUI
 import kotlinx.android.synthetic.main.fragment_project_detail.*
+import net.it96.enfoque.LoginActivity
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
@@ -21,7 +24,6 @@ import net.it96.enfoque.databinding.FragmentProjectListBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 
 @Suppress("UNCHECKED_CAST")
@@ -29,15 +31,9 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
 
     private lateinit var binding: FragmentProjectListBinding
 
-//    private lateinit var projectViewModel: ProjectViewModel
-    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl()) }
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), "") }
 
     private lateinit var recyclerView: RecyclerView
-
-
-    companion object {
-        private const val ARG_OBJECT = "object"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,11 +68,14 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
             findNavController(this).navigate(ProjectListFragmentDirections.actionListFragmentToAddFragment())
         }
 
+        binding.btnLogout.setOnClickListener {
+            signOut()
+        }
+
         return binding.root
     }
 
     private fun setupRecyclerView() {
-        Timber.i("***MZP*** setupRecyclerView")
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(
             DividerItemDecoration(
@@ -86,36 +85,20 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
         )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Timber.i("***onViewCreated***")
-
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-////            val tabItem: TabItem = binding.
-        }
-    }
-
-//    private fun observeData() {
-//        binding.shimmerViewContainer.startShimmer()
-//        projectViewModel.fetchAllProjectsData().observe(viewLifecycleOwner, {
-//            binding.shimmerViewContainer.visibility = View.GONE
-//            binding.shimmerViewContainer.stopShimmer()
-//            adapter.setListData(it)
-//            adapter.notifyDataSetChanged()
-//        })
-//    }
-
     private fun observeData() {
-        Timber.i("***MZP*** observeData")
-        binding.shimmerViewContainer.startShimmer()
-//        projectViewModel.fetchAllProjectsData().observe(viewLifecycleOwner, Observer { result ->
+//        binding.shimmerViewContainer.startShimmer()
+
+//        projectViewModel.getProjectList.observe(viewLifecycleOwner, { result ->
 //            when (result) {
 //                is Resource.Loading<*> -> {
 //                    progressBar.visibility = View.VISIBLE
 //                }
 //                is Resource.Success<*> -> {
 //                    progressBar.visibility = View.GONE
-//                    recyclerView.adapter = ProjectListAdapter(requireContext(), result.data, this)
+//                    binding.shimmerViewContainer.visibility = View.GONE
+//                    binding.shimmerViewContainer.stopShimmer()
+//                    recyclerView.adapter = ProjectListAdapter(requireContext(),
+//                        result.data as List<Project>, this)
 //                }
 //                is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE
@@ -129,17 +112,14 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
 //        })
 
         projectViewModel.getProjectList.observe(viewLifecycleOwner, { result ->
-            Timber.i("***MZP*** projectViewModel.getProjectList")
-            Timber.i("***MZP*** %s", result.toString())
             when (result) {
                 is Resource.Loading<*> -> {
-                    progressBar.visibility = View.VISIBLE
+
                 }
                 is Resource.Success<*> -> {
-                    Timber.i("***MZP*** RESOURCE.SUCCESS")
                     progressBar.visibility = View.GONE
-                    binding.shimmerViewContainer.visibility = View.GONE
-                    binding.shimmerViewContainer.stopShimmer()
+//                    binding.shimmerViewContainer.visibility = View.GONE
+//                    binding.shimmerViewContainer.stopShimmer()
                     recyclerView.adapter = ProjectListAdapter(requireContext(),
                         result.data as List<Project>, this)
                 }
@@ -155,16 +135,18 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
         })
     }
 
-    override fun onResume() {
-        super.onResume()
-        Timber.i("***MZP*** onResume")
-    }
-
     override fun onProjectClick(project: Project) {
-        Timber.i("***MZP*** onProjectClick")
         val bundle = Bundle()
         bundle.putParcelable("Project", project)
-        Timber.i("***MZP*** project $project")
         findNavController().navigate(R.id.projectDetailFragment, bundle)
+    }
+
+    private fun signOut(){
+        AuthUI.getInstance().signOut(requireActivity()).addOnSuccessListener {
+            startActivity(Intent(requireActivity(), LoginActivity::class.java))
+            requireActivity().supportFinishAfterTransition()
+        }.addOnFailureListener{
+            Toast.makeText(requireContext(), "Ocurrio un error ${it.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
