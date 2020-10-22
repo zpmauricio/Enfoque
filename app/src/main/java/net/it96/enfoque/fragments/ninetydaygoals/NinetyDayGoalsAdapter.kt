@@ -13,12 +13,7 @@ import timber.log.Timber
 class NinetyDayGoalsAdapter(
     private val context: Context,
     private var goalList: List<NinetyDayGoal>,
-    private val itemClickListener: OnGoalClickListener,
 ) : RecyclerView.Adapter<NinetyDayGoalsAdapter.GoalsViewHolder>() {
-
-    interface OnGoalClickListener {
-        fun onGoalClick(goal: NinetyDayGoal)
-    }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -41,7 +36,6 @@ class NinetyDayGoalsAdapter(
         fun bindView(goal: NinetyDayGoal) {
             Timber.i("***MZP*** goal.description: ${goal.description}")
             itemView.txt_goal.text = goal.description
-            itemView.setOnClickListener { itemClickListener.onGoalClick(goal) }
         }
     }
 

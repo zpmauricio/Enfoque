@@ -43,6 +43,42 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
         }
     }
 
+    val getKeyResultsList = liveData(Dispatchers.IO) {
+        emit(Resource.Loading())
+        try{
+            projectRepository.getKeyResultsList(param).collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            emit(Resource.Failure(e))
+            Timber.e("***MZP*** ERROR GETTING KEY RESULTS LIST: $e")
+        }
+    }
+
+    val getTasksList = liveData(Dispatchers.IO) {
+        emit(Resource.Loading())
+        try{
+            projectRepository.getTasksList(param).collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            emit(Resource.Failure(e))
+            Timber.e("***MZP*** ERROR GETTING TASKS LIST: $e")
+        }
+    }
+
+    val getNotesList = liveData(Dispatchers.IO) {
+        emit(Resource.Loading())
+        try{
+            projectRepository.getNotesList(param).collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            emit(Resource.Failure(e))
+            Timber.e("***MZP*** ERROR GETTING NOTES LIST: $e")
+        }
+    }
+
     // Involve the Dispatchers to use Coroutines and send the data to the Repository
     fun addProject(project: Project) {
         viewModelScope.launch(Dispatchers.IO) {

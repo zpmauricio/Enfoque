@@ -89,4 +89,61 @@ class ProjectRepositoryImpl : ProjectRepository {
 
         awaitClose { subscription.remove() }
     }
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getKeyResultsList(selectedProject: String): Flow<Resource<List<KeyResult>>> = callbackFlow {
+        Timber.i("***MZP*** getKeyResultsList()")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Results")
+        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+            if(!collectionSnapshot!!.isEmpty) {
+                Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
+                val keyResultsList = collectionSnapshot.toObjects(KeyResult::class.java)
+                Timber.i("***MZP*** keyResultsList: %s", keyResultsList.toString())
+                offer(Resource.Success(keyResultsList))
+            }
+            if(firestoreError != null) {
+                channel.close(firestoreError.cause)
+            }
+        }
+
+        awaitClose { subscription.remove() }
+    }
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getTasksList(selectedProject: String): Flow<Resource<List<Task>>> = callbackFlow {
+        Timber.i("***MZP*** getKeyResultsList()")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Tasks")
+        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+            if(!collectionSnapshot!!.isEmpty) {
+                Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
+                val tasksList = collectionSnapshot.toObjects(Task::class.java)
+                Timber.i("***MZP*** tasksList: %s", tasksList.toString())
+                offer(Resource.Success(tasksList))
+            }
+            if(firestoreError != null) {
+                channel.close(firestoreError.cause)
+            }
+        }
+
+        awaitClose { subscription.remove() }
+    }
+
+    @ExperimentalCoroutinesApi
+    override suspend fun getNotesList(selectedProject: String): Flow<Resource<List<Note>>> = callbackFlow {
+        Timber.i("***MZP*** getKeyResultsList()")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Notes")
+        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+            if(!collectionSnapshot!!.isEmpty) {
+                Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
+                val notesList = collectionSnapshot.toObjects(Note::class.java)
+                Timber.i("***MZP*** notesList: %s", notesList.toString())
+                offer(Resource.Success(notesList))
+            }
+            if(firestoreError != null) {
+                channel.close(firestoreError.cause)
+            }
+        }
+
+        awaitClose { subscription.remove() }
+    }
 }

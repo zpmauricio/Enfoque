@@ -1,4 +1,4 @@
-package net.it96.enfoque.fragments.ninetydaygoals
+package net.it96.enfoque.fragments.results
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_ninety_day_goals.view.*
+import kotlinx.android.synthetic.main.fragment_results.view.*
 import net.it96.enfoque.R
-import net.it96.enfoque.database.NinetyDayGoal
+import net.it96.enfoque.database.KeyResult
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
@@ -21,7 +21,7 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
 import timber.log.Timber
 
-class NinetyDayGoalsFragment : Fragment() {
+class KeyResultsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
@@ -37,9 +37,9 @@ class NinetyDayGoalsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_ninety_day_goals, container, false)
+        val view = inflater.inflate(R.layout.fragment_results, container, false)
 
-        recyclerView = view.rv_90daygoal
+        recyclerView = view.rv_keyResults
         setupRecyclerView()
 
         requireArguments().let {
@@ -49,10 +49,10 @@ class NinetyDayGoalsFragment : Fragment() {
         // Start process to read from the database
         observeData()
 
-        view.btn_keyResults.setOnClickListener {
+        view.btn_tasks.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
-            findNavController().navigate(R.id.action_ninetyDayGoalsFragment_to_resultsFragment, bundle)
+            findNavController().navigate(R.id.action_resultsFragment_to_tasksFragment, bundle)
         }
 
         return view
@@ -69,7 +69,7 @@ class NinetyDayGoalsFragment : Fragment() {
     }
 
     private fun observeData() {
-        projectViewModel.getGoalsList.observe(viewLifecycleOwner, { result ->
+        projectViewModel.getKeyResultsList.observe(viewLifecycleOwner, { result ->
             when (result) {
                 is Resource.Loading<*> -> {
 
@@ -78,8 +78,8 @@ class NinetyDayGoalsFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
-                    recyclerView.adapter = NinetyDayGoalsAdapter(requireContext(),
-                        result.data as List<NinetyDayGoal>)
+                    recyclerView.adapter = KeyResultsAdapter(requireContext(),
+                        result.data as List<KeyResult>)
                     Timber.i("***MZP*** result: $result")
                 }
                 is Resource.Failure<*> -> {

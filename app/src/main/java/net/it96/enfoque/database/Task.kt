@@ -4,6 +4,6 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class NinetyDayGoal (
-    var description : String = ""
+data class Task (
+    val description : String = ""
 ) : Parcelable

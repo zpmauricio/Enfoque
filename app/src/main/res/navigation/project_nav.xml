@@ -44,5 +44,34 @@
         android:id="@+id/ninetyDayGoalsFragment"
         android:name="net.it96.enfoque.fragments.ninetydaygoals.NinetyDayGoalsFragment"
         android:label="@string/NinetyDayGoals"
-        tools:layout="@layout/fragment_ninety_day_goals" />
+        tools:layout="@layout/fragment_ninety_day_goals" >
+        <action
+            android:id="@+id/action_ninetyDayGoalsFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="net.it96.enfoque.fragments.results.KeyResultsFragment"
+        android:label="@string/KeyResults"
+        tools:layout="@layout/fragment_results" >
+        <action
+            android:id="@+id/action_resultsFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="net.it96.enfoque.fragments.tasks.TasksFragment"
+        android:label="@string/Tasks" >
+        <action
+            android:id="@+id/action_tasksFragment_to_notesFragment"
+            app:destination="@id/notesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="net.it96.enfoque.fragments.notes.NotesFragment"
+        android:label="@string/Notes" >
+        <action
+            android:id="@+id/action_notesFragment_to_projectListFragment"
+            app:destination="@id/projectListFragment" />
+    </fragment>
 </navigation>

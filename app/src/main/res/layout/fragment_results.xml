@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ninetydaygoals.NinetyDayGoalsFragment">
+    tools:context=".fragments.results.KeyResultsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_90daygoal"
+        android:id="@+id/rv_keyResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -18,21 +18,21 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <Button
-        android:id="@+id/btn_addGoal"
+        android:id="@+id/btn_addKeyResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_button"
-        app:layout_constraintTop_toBottomOf="@id/rv_90daygoal"
+        app:layout_constraintTop_toBottomOf="@id/rv_keyResults"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_keyResults"/>
+        app:layout_constraintEnd_toStartOf="@id/btn_tasks"/>
 
     <Button
-        android:id="@+id/btn_keyResults"
+        android:id="@+id/btn_tasks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/KeyResults"
+        android:text="@string/Tasks"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/btn_addGoal"
-        app:layout_constraintTop_toBottomOf="@id/rv_90daygoal" />
+        app:layout_constraintStart_toEndOf="@id/btn_addKeyResult"
+        app:layout_constraintTop_toBottomOf="@id/rv_keyResults" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
