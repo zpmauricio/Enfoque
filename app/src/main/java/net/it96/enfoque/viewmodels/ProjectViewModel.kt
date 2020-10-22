@@ -39,7 +39,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING GOALS LIST")
+            Timber.e("***MZP*** ERROR GETTING GOALS LIST: $e")
         }
     }
 

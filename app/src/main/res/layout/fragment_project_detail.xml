@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:src="@android:drawable/ic_menu_edit"
+        android:contentDescription=""
         app:layout_constraintBottom_toBottomOf="@+id/txt_projectName"
         app:layout_constraintStart_toEndOf="@id/txt_projectName" />
 
@@ -44,6 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:contentDescription=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/txt_projectName"
@@ -63,7 +65,7 @@
         android:id="@+id/btn_Obj90Days"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="90 day goals"
+        android:text="@string/NinetyDayGoals"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

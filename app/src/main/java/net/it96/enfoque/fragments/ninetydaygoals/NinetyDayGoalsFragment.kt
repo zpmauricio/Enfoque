@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_ninety_day_goals.view.*
-import kotlinx.android.synthetic.main.fragment_project_detail.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.NinetyDayGoal
 import net.it96.enfoque.database.Project
@@ -43,12 +42,11 @@ class NinetyDayGoalsFragment : Fragment(), NinetyDayGoalsAdapter.OnGoalClickList
         setupRecyclerView()
 
         requireArguments().let {
-            Timber.i("***MZP*** requireArguments")
-            Timber.i("***MZP*** it: ${it}")
-            Timber.i("***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
-            //view.txt_projectName.text = it.getParcelable<Project>("Project")!!.name
+//            Timber.i("***MZP*** requireArguments")
+//            Timber.i("***MZP*** it: ${it}")
+//            Timber.i("***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
             selectedProject = it.getParcelable("Project")!!
-            Timber.i("Detail Frag: $selectedProject")
+//            Timber.i("Detail Frag: $selectedProject")
         }
 
         // Start process to read from the database
@@ -74,7 +72,7 @@ class NinetyDayGoalsFragment : Fragment(), NinetyDayGoalsAdapter.OnGoalClickList
 
                 }
                 is Resource.Success<*> -> {
-                    progressBar.visibility = View.GONE
+//                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
                     recyclerView.adapter = NinetyDayGoalsAdapter(requireContext(),
@@ -82,7 +80,7 @@ class NinetyDayGoalsFragment : Fragment(), NinetyDayGoalsAdapter.OnGoalClickList
                     Timber.i("***MZP*** result: $result")
                 }
                 is Resource.Failure<*> -> {
-                    progressBar.visibility = View.GONE
+//                    progressBar.visibility = View.GONE
                     Toast.makeText(
                         requireContext(),
                         "Error al traer los datos ${result.exception}",

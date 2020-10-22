@@ -24,12 +24,12 @@ class ProjectDetailFragment : Fragment() {
 
         Timber.i("***MZP*** onCreateView")
         requireArguments().let {
-            Timber.i("***MZP*** requireArguments")
-            Timber.i("***MZP*** it: ${it}")
-            Timber.i("***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
+//            Timber.i("***MZP*** requireArguments")
+//            Timber.i("***MZP*** it: ${it}")
+//            Timber.i("***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
             view.txt_projectName.text = it.getParcelable<Project>("Project")!!.name
             selectedProject = it.getParcelable("Project")!!
-            Timber.i("Detail Frag: $selectedProject")
+//            Timber.i("Detail Frag: $selectedProject")
         }
 
 //        NinetyDayGoals()
