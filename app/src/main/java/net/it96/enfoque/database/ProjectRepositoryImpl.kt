@@ -37,21 +37,6 @@ class ProjectRepositoryImpl : ProjectRepository {
         awaitClose { suscription.remove() }
     }
 
-    // Receives the data and stores it on Firestore
-    fun save(project: Project) {
-        firestore.collection("users")
-            .document(user!!.email!!)
-            .collection("Projects")
-            .document(project.name)
-            .set(project)
-            .addOnSuccessListener {
-                Timber.i("***MZP*** Document(Project) saved")
-            }
-            .addOnFailureListener {
-                Timber.i("***MZP*** Saved failed")
-            }
-    }
-
     @ExperimentalCoroutinesApi
     override suspend fun getProjectList(): Flow<Resource<List<Project>>> = callbackFlow {
         Timber.i("***MZP*** getProjectList()")
@@ -72,13 +57,13 @@ class ProjectRepositoryImpl : ProjectRepository {
     }
 
     @ExperimentalCoroutinesApi
-    override suspend fun getGoalsList(selectedProject: String): Flow<Resource<List<NinetyDayGoal>>> = callbackFlow {
+    override suspend fun getGoalsList(selectedProject: String): Flow<Resource<List<Goal>>> = callbackFlow {
         Timber.i("***MZP*** getGoalsList()")
-        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("90DayGoals")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Goals")
         val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
-                val goalsList = collectionSnapshot.toObjects(NinetyDayGoal::class.java)
+                val goalsList = collectionSnapshot.toObjects(Goal::class.java)
                 Timber.i("***MZP*** goalsList: %s", goalsList.toString())
                 offer(Resource.Success(goalsList))
             }
@@ -145,5 +130,36 @@ class ProjectRepositoryImpl : ProjectRepository {
         }
 
         awaitClose { subscription.remove() }
+    }
+
+    // Receives the data and stores it on Firestore
+    override suspend fun saveProject(project: Project) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(project.name)
+            .set(project)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Document(Project) saved")
+            }
+            .addOnFailureListener {
+                Timber.i("***MZP*** Saved failed")
+            }
+    }
+
+    // Receives the data and stores it on Firestore
+    override suspend fun saveGoal(goal: Goal, selectedProject: Project) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(selectedProject.name)
+            .collection("Goals")
+            .add(goal)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Goal saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
     }
 }

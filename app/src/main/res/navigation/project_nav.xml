@@ -38,13 +38,13 @@
         tools:layout="@layout/fragment_project_detail" >
         <action
             android:id="@+id/action_projectDetailFragment_to_ninetyDayGoalsFragment"
-            app:destination="@id/ninetyDayGoalsFragment" />
+            app:destination="@id/goalsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/ninetyDayGoalsFragment"
-        android:name="net.it96.enfoque.fragments.ninetydaygoals.NinetyDayGoalsFragment"
-        android:label="@string/NinetyDayGoals"
-        tools:layout="@layout/fragment_ninety_day_goals" >
+        android:id="@+id/goalsFragment"
+        android:name="net.it96.enfoque.fragments.goals.GoalsFragment"
+        android:label="@string/Goals"
+        tools:layout="@layout/fragment_goals" >
         <action
             android:id="@+id/action_ninetyDayGoalsFragment_to_resultsFragment"
             app:destination="@id/resultsFragment" />

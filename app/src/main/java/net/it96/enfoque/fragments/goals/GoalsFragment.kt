@@ -1,4 +1,4 @@
-package net.it96.enfoque.fragments.ninetydaygoals
+package net.it96.enfoque.fragments.goals
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,9 +11,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_ninety_day_goals.view.*
+import kotlinx.android.synthetic.main.fragment_goals.view.*
 import net.it96.enfoque.R
-import net.it96.enfoque.database.NinetyDayGoal
+import net.it96.enfoque.database.Goal
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
@@ -21,7 +21,7 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
 import timber.log.Timber
 
-class NinetyDayGoalsFragment : Fragment() {
+class GoalsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
 
@@ -37,7 +37,7 @@ class NinetyDayGoalsFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_ninety_day_goals, container, false)
+        val view = inflater.inflate(R.layout.fragment_goals, container, false)
 
         recyclerView = view.rv_90daygoal
         setupRecyclerView()
@@ -53,6 +53,14 @@ class NinetyDayGoalsFragment : Fragment() {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             findNavController().navigate(R.id.action_ninetyDayGoalsFragment_to_resultsFragment, bundle)
+        }
+
+        view.btn_addGoal.setOnClickListener {
+            var dialog = AddGoalFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("Project", selectedProject)
+            dialog.arguments = bundle
+            dialog.show(childFragmentManager, "AddGoal")
         }
 
         return view
@@ -78,8 +86,8 @@ class NinetyDayGoalsFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
-                    recyclerView.adapter = NinetyDayGoalsAdapter(requireContext(),
-                        result.data as List<NinetyDayGoal>)
+                    recyclerView.adapter = GoalsAdapter(requireContext(),
+                        result.data as List<Goal>)
                     Timber.i("***MZP*** result: $result")
                 }
                 is Resource.Failure<*> -> {

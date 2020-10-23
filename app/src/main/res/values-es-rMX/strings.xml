@@ -17,7 +17,8 @@
     <string name="hello_blank_fragment">Hola blank fragment</string>
     <string name="settings">Configuraciones</string>
     <string name="projectImage">Imagen del Proyecto</string>
-    <string name="NinetyDayGoals">Objetivos a 90 Días</string>
+    <string name="Goals">Objetivos</string>
     <string name="KeyResults">Resultados Clave</string>
     <string name="Tasks">Tareas</string>
+    <string name="NewGoal">ej. Aumentar las ventas un 30%</string>
 </resources>

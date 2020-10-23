@@ -35,7 +35,7 @@ class ProjectDetailFragment : Fragment() {
 
 //        NinetyDayGoals()
 
-        view.btn_Obj90Days.setOnClickListener {
+        view.btn_Goals.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             findNavController().navigate(R.id.action_projectDetailFragment_to_ninetyDayGoalsFragment, bundle)
