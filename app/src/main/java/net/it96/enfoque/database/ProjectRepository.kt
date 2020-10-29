@@ -12,4 +12,7 @@ interface ProjectRepository {
 
     suspend fun saveProject(project: Project)
     suspend fun saveGoal(goal: Goal, selectedProject: Project)
+    suspend fun saveKeyResult(keyResult: KeyResult, selectedProject: Project)
+
+    suspend fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project)
 }

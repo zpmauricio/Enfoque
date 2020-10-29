@@ -24,7 +24,8 @@
         android:text="@string/add_button"
         app:layout_constraintTop_toBottomOf="@id/rv_90daygoal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_keyResults"/>
+        app:layout_constraintEnd_toStartOf="@id/btn_keyResults"
+        />
 
     <Button
         android:id="@+id/btn_keyResults"

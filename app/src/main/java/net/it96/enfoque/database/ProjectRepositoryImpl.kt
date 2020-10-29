@@ -7,6 +7,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import net.it96.enfoque.vo.Resource
 import timber.log.Timber
 
@@ -78,8 +79,8 @@ class ProjectRepositoryImpl : ProjectRepository {
     @ExperimentalCoroutinesApi
     override suspend fun getKeyResultsList(selectedProject: String): Flow<Resource<List<KeyResult>>> = callbackFlow {
         Timber.i("***MZP*** getKeyResultsList()")
-        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Results")
-        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+        val keyResultListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Results")
+        val subscription = keyResultListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 Timber.i("***MZP*** collectionSnapshot: %s", collectionSnapshot.documents)
                 val keyResultsList = collectionSnapshot.toObjects(KeyResult::class.java)
@@ -161,5 +162,30 @@ class ProjectRepositoryImpl : ProjectRepository {
             .addOnFailureListener {
                 Timber.e("***MZP*** Saved failed")
             }
+    }
+
+    // Receives the data and stores it on Firestore
+    override suspend fun saveKeyResult(keyResult: KeyResult, selectedProject: Project) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(selectedProject.name)
+            .collection("Results")
+            .add(keyResult)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Key Result saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
+    }
+
+    override suspend fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project){
+        // Get the collection that include the documents that match with the query
+        val keyResultListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).collection("Results").whereEqualTo("description",keyResult.description).get().await()
+
+        keyResultListSnapshot.forEach{doc ->
+            firestore.collection("users").document(user.email!!).collection("Projects").document(selectedProject.name).collection("Results").document(doc.id).delete().await()
+        }
     }
 }

@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import net.it96.enfoque.database.Goal
-import net.it96.enfoque.database.Project
-import net.it96.enfoque.database.ProjectRepository
-import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.database.*
 import net.it96.enfoque.vo.Resource
 import timber.log.Timber
 
@@ -94,4 +91,17 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
         }
     }
 
+    // Involve the Dispatchers to use Coroutines and send the data to the Repository
+    fun addKeyResult(keyResult: KeyResult, selectedProject: Project) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.saveKeyResult(keyResult, selectedProject)
+        }
+    }
+
+    // Involve the Dispatchers to use Coroutines and send the data to the Repository
+    fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project){
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.deleteKeyResult(keyResult, selectedProject)
+        }
+    }
 }

@@ -1,14 +1,17 @@
 package net.it96.enfoque.fragments.results
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_results.view.*
@@ -31,6 +34,8 @@ class KeyResultsFragment : Fragment() {
         ViewModelFactory(ProjectRepositoryImpl(),
             selectedProject.name)
     }
+
+    private lateinit var deleteIcon: Drawable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +60,8 @@ class KeyResultsFragment : Fragment() {
             findNavController().navigate(R.id.action_resultsFragment_to_tasksFragment, bundle)
         }
 
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
+
         return view
     }
 
@@ -78,9 +85,13 @@ class KeyResultsFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
+                    @Suppress("UNCHECKED_CAST")
                     recyclerView.adapter = KeyResultsAdapter(requireContext(),
-                        result.data as List<KeyResult>)
+                        result.data as List<KeyResult>, projectViewModel)
                     Timber.i("***MZP*** result: $result")
+
+                    val itemTouchHelper = ItemTouchHelper(KeyResultsDelete(recyclerView.adapter as KeyResultsAdapter, selectedProject, requireContext()))
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
                 }
                 is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE

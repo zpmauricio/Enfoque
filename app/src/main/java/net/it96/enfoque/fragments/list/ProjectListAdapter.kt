@@ -47,7 +47,7 @@ class ProjectListAdapter(
             itemView.projectName_txt.text = project.name
 //            itemView.projectResults_txt.text = project.results
 //            itemView.projectGoals90_txt.text = project.goals90
-            itemView.setOnClickListener { itemClickListener.onProjectClick(project) }
+            itemView.projectName_txt.setOnClickListener { itemClickListener.onProjectClick(project) }
         }
     }
 

@@ -86,31 +86,6 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
     }
 
     private fun observeData() {
-//        binding.shimmerViewContainer.startShimmer()
-
-//        projectViewModel.getProjectList.observe(viewLifecycleOwner, { result ->
-//            when (result) {
-//                is Resource.Loading<*> -> {
-//                    progressBar.visibility = View.VISIBLE
-//                }
-//                is Resource.Success<*> -> {
-//                    progressBar.visibility = View.GONE
-//                    binding.shimmerViewContainer.visibility = View.GONE
-//                    binding.shimmerViewContainer.stopShimmer()
-//                    recyclerView.adapter = ProjectListAdapter(requireContext(),
-//                        result.data as List<Project>, this)
-//                }
-//                is Resource.Failure<*> -> {
-//                    progressBar.visibility = View.GONE
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "Error al traer los datos ${result.exception}",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        })
-
         projectViewModel.getProjectList.observe(viewLifecycleOwner, { result ->
             when (result) {
                 is Resource.Loading<*> -> {
@@ -118,8 +93,6 @@ class ProjectListFragment : Fragment(), ProjectListAdapter.OnProjectClickListene
                 }
                 is Resource.Success<*> -> {
                     progressBar.visibility = View.GONE
-//                    binding.shimmerViewContainer.visibility = View.GONE
-//                    binding.shimmerViewContainer.stopShimmer()
                     recyclerView.adapter = ProjectListAdapter(requireContext(),
                         result.data as List<Project>, this)
                 }
