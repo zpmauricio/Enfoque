@@ -1,14 +1,17 @@
 package net.it96.enfoque.fragments.goals
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_goals.view.*
@@ -19,7 +22,6 @@ import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 class GoalsFragment : Fragment() {
 
@@ -32,6 +34,12 @@ class GoalsFragment : Fragment() {
             selectedProject.name)
     }
 
+    private lateinit var goalsList : MutableList<Goal>
+
+    private lateinit var deleteIcon: Drawable
+
+    private lateinit var adapter: GoalsAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -39,12 +47,13 @@ class GoalsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_goals, container, false)
 
-        recyclerView = view.rv_90daygoal
-        setupRecyclerView()
-
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
+
+        adapter = GoalsAdapter(requireContext(), projectViewModel)
+        recyclerView = view.rv_goal
+        setupRecyclerView()
 
         // Start process to read from the database
         observeData()
@@ -56,18 +65,21 @@ class GoalsFragment : Fragment() {
         }
 
         view.btn_addGoal.setOnClickListener {
-            var dialog = AddGoalFragment()
+            val dialog = GoalAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             dialog.arguments = bundle
             dialog.show(childFragmentManager, "AddGoal")
         }
 
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
+
         return view
     }
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -86,9 +98,15 @@ class GoalsFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
-                    recyclerView.adapter = GoalsAdapter(requireContext(),
-                        result.data as List<Goal>)
-                    Timber.i("***MZP*** result: $result")
+                    @Suppress("UNCHECKED_CAST")
+                    goalsList = result.data as MutableList<Goal>
+                    adapter.setListData(goalsList)
+                    recyclerView.adapter = adapter
+
+                    val itemTouchHelper = ItemTouchHelper(GoalDelete(recyclerView.adapter as GoalsAdapter, selectedProject, requireContext()))
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
+
+                    adapter.notifyDataSetChanged()
                 }
                 is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE

@@ -1,4 +1,4 @@
-package net.it96.enfoque.fragments.results
+package net.it96.enfoque.fragments.tasks
 
 import android.content.Context
 import android.graphics.Canvas
@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Project
 
-class KeyResultsDelete (var adapter : KeyResultsAdapter, var selectedProject : Project, var context : Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-
+class TaskDelete (var adapter : TasksAdapter, var selectedProject : Project, var context : Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private var swipeBackground: ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
     private lateinit var deleteIcon: Drawable
 
@@ -25,10 +24,13 @@ class KeyResultsDelete (var adapter : KeyResultsAdapter, var selectedProject : P
     }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-        val keyResult = adapter.getObject(viewHolder.adapterPosition)
-        adapter.deleteKeyResult(keyResult, selectedProject, viewHolder)
+        val task = adapter.getObject(viewHolder.adapterPosition)
+        adapter.deleteTask(task, selectedProject, viewHolder)
     }
 
+    /*
+     *  Function to draw rectangle and delete icon when swiping an item
+     */
     override fun onChildDraw(
         c: Canvas,
         recyclerView: RecyclerView,
@@ -43,22 +45,34 @@ class KeyResultsDelete (var adapter : KeyResultsAdapter, var selectedProject : P
 
         val iconMargin = (itemView.height - deleteIcon.intrinsicHeight) / 2
 
-        if(dX > 0) {
+        if (dX > 0) {
             swipeBackground.setBounds(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
-            deleteIcon.setBounds(itemView.left + iconMargin, itemView.top + iconMargin, itemView.left + iconMargin + deleteIcon.intrinsicWidth, itemView.bottom - iconMargin)
+            deleteIcon.setBounds(itemView.left + iconMargin,
+                itemView.top + iconMargin,
+                itemView.left + iconMargin + deleteIcon.intrinsicWidth,
+                itemView.bottom - iconMargin)
         } else {
-            swipeBackground.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
-            deleteIcon.setBounds(itemView.right - iconMargin - deleteIcon.intrinsicWidth, itemView.top + iconMargin, itemView.right - iconMargin, itemView.bottom - iconMargin)
+            swipeBackground.setBounds(itemView.right + dX.toInt(),
+                itemView.top,
+                itemView.right,
+                itemView.bottom)
+            deleteIcon.setBounds(itemView.right - iconMargin - deleteIcon.intrinsicWidth,
+                itemView.top + iconMargin,
+                itemView.right - iconMargin,
+                itemView.bottom - iconMargin)
         }
 
         swipeBackground.draw(c)
 
         c.save()
 
-        if (dX > 0){
+        if (dX > 0) {
             c.clipRect(itemView.left, itemView.top, dX.toInt(), itemView.bottom)
         } else {
-            c.clipRect(itemView.right - iconMargin - deleteIcon.intrinsicWidth, itemView.top + iconMargin, itemView.right - iconMargin, itemView.bottom - iconMargin)
+            c.clipRect(itemView.right - iconMargin - deleteIcon.intrinsicWidth,
+                itemView.top + iconMargin,
+                itemView.right - iconMargin,
+                itemView.bottom - iconMargin)
         }
         deleteIcon.draw(c)
 

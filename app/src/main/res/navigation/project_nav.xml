@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/projectAddFragment"
-        android:name="net.it96.enfoque.fragments.add.ProjectAddFragment"
+        android:name="net.it96.enfoque.fragments.list.ProjectListAddFragment"
         android:label="@string/AddProject"
         tools:layout="@layout/project_add">
         <action

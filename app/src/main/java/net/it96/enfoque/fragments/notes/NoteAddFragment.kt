@@ -1,4 +1,4 @@
-package net.it96.enfoque.fragments.goals
+package net.it96.enfoque.fragments.notes
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -10,31 +10,30 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import net.it96.enfoque.R
-import net.it96.enfoque.database.Goal
+import net.it96.enfoque.database.Note
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
-import net.it96.enfoque.databinding.AddGoalsBinding
+import net.it96.enfoque.databinding.AddNoteBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
-import timber.log.Timber
 
-class AddGoalFragment : DialogFragment() {
+class NoteAddFragment : DialogFragment() {
 
-    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), "") }
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
+        ProjectRepositoryImpl(), "") }
 
     private lateinit var selectedProject: Project
 
-    private lateinit var binding: AddGoalsBinding
+    private lateinit var binding: AddNoteBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
         // Inflate view and obtain an instance of the binding class
         this.binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.add_goals,
+            R.layout.add_note,
             container,
             false
         )
@@ -44,7 +43,7 @@ class AddGoalFragment : DialogFragment() {
             selectedProject = it.getParcelable("Project")!!
         }
 
-        binding.btnSaveNewGoal.setOnClickListener {
+        binding.btnSaveNewNote.setOnClickListener {
             insertDataToDatabase()
         }
 
@@ -54,21 +53,22 @@ class AddGoalFragment : DialogFragment() {
     }
 
     private fun insertDataToDatabase() {
-        val newGoal = binding.etxtNewGoal.text.toString()
+        val newNote = binding.etxtNewNote.text.toString()
 
-        if (inputCheck(newGoal)) {
+        if (inputCheck(newNote)) {
 
-            if (newGoal.isEmpty())
+            if (newNote.isEmpty())
             {
-                binding.etxtNewGoal.error = "Please enter a goal"
+                binding.etxtNewNote.error = "Please enter a Note"
                 return
             }
 
-            // Create new goal
-            val goal = Goal(newGoal).apply { }
+            // Create new note
+            val note = Note(newNote).apply { }
 
-            Timber.i("***MZP*** Project: $selectedProject")
-            projectViewModel.addGoal(goal, selectedProject)
+            projectViewModel.addNote(note, selectedProject)
+            val adapter = NotesAdapter(requireContext(), projectViewModel)
+            adapter.addNote(note)
 
             // Navigate Back
             dismiss()
@@ -79,8 +79,7 @@ class AddGoalFragment : DialogFragment() {
         }
     }
 
-    private fun inputCheck(goal: String): Boolean {
-        return !(TextUtils.isEmpty(goal))
+    private fun inputCheck(note: String): Boolean {
+        return !(TextUtils.isEmpty(note))
     }
-
 }

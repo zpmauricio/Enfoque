@@ -1,14 +1,17 @@
 package net.it96.enfoque.fragments.tasks
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_tasks.view.*
@@ -19,7 +22,6 @@ import net.it96.enfoque.database.Task
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 class TasksFragment : Fragment() {
 
@@ -32,6 +34,12 @@ class TasksFragment : Fragment() {
             selectedProject.name)
     }
 
+    private lateinit var tasksList : MutableList<Task>
+
+    private lateinit var deleteIcon: Drawable
+
+    private lateinit var adapter: TasksAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -39,12 +47,13 @@ class TasksFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tasks, container, false)
 
-        recyclerView = view.rv_tasks
-        setupRecyclerView()
-
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
+
+        adapter = TasksAdapter(requireContext(), projectViewModel)
+        recyclerView = view.rv_tasks
+        setupRecyclerView()
 
         // Start process to read from the database
         observeData()
@@ -55,11 +64,22 @@ class TasksFragment : Fragment() {
             findNavController().navigate(R.id.action_tasksFragment_to_notesFragment, bundle)
         }
 
+        view.btn_addTask.setOnClickListener {
+            val dialog = TaskAddFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("Project", selectedProject)
+            dialog.arguments = bundle
+            dialog.show(childFragmentManager, "AddTask")
+        }
+
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
+
         return view
     }
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -78,9 +98,15 @@ class TasksFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
-                    recyclerView.adapter = TasksAdapter(requireContext(),
-                        result.data as List<Task>)
-                    Timber.i("***MZP*** result: $result")
+                    @Suppress("UNCHECKED_CAST")
+                    tasksList = result.data as MutableList<Task>
+                    adapter.setListData(tasksList)
+                    recyclerView.adapter = adapter
+
+                    val itemTouchHelper = ItemTouchHelper(TaskDelete(recyclerView.adapter as TasksAdapter, selectedProject, requireContext()))
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
+
+                    adapter.notifyDataSetChanged()
                 }
                 is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE

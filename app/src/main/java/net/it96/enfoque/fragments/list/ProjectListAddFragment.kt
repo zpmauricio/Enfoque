@@ -1,4 +1,4 @@
-package net.it96.enfoque.fragments.add
+package net.it96.enfoque.fragments.list
 
 import android.os.Bundle
 import android.text.TextUtils
@@ -17,7 +17,7 @@ import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 
-class ProjectAddFragment : Fragment() {
+class ProjectListAddFragment : Fragment() {
 
 //    private lateinit var mProjectViewModel: ProjectViewModel
     private val mProjectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(

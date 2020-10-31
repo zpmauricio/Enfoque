@@ -22,7 +22,6 @@ import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 class KeyResultsFragment : Fragment() {
 
@@ -35,7 +34,11 @@ class KeyResultsFragment : Fragment() {
             selectedProject.name)
     }
 
+    private lateinit var keyResultList : MutableList<KeyResult>
+
     private lateinit var deleteIcon: Drawable
+
+    private lateinit var adapter: KeyResultsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,12 +47,13 @@ class KeyResultsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_results, container, false)
 
-        recyclerView = view.rv_keyResults
-        setupRecyclerView()
-
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
+
+        adapter = KeyResultsAdapter(requireContext(), projectViewModel)
+        recyclerView = view.rv_keyResults
+        setupRecyclerView()
 
         // Start process to read from the database
         observeData()
@@ -60,6 +64,14 @@ class KeyResultsFragment : Fragment() {
             findNavController().navigate(R.id.action_resultsFragment_to_tasksFragment, bundle)
         }
 
+        view.btn_addKeyResult.setOnClickListener {
+            val dialog = KeyResultAddFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("Project", selectedProject)
+            dialog.arguments = bundle
+            dialog.show(childFragmentManager, "AddKeyResult")
+        }
+
         deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
 
         return view
@@ -67,6 +79,7 @@ class KeyResultsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -86,12 +99,14 @@ class KeyResultsFragment : Fragment() {
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
                     @Suppress("UNCHECKED_CAST")
-                    recyclerView.adapter = KeyResultsAdapter(requireContext(),
-                        result.data as List<KeyResult>, projectViewModel)
-                    Timber.i("***MZP*** result: $result")
+                    keyResultList = result.data as MutableList<KeyResult>
+                    adapter.setListData(keyResultList)
+                    recyclerView.adapter = adapter
 
-                    val itemTouchHelper = ItemTouchHelper(KeyResultsDelete(recyclerView.adapter as KeyResultsAdapter, selectedProject, requireContext()))
+                    val itemTouchHelper = ItemTouchHelper(KeyResultDelete(recyclerView.adapter as KeyResultsAdapter, selectedProject, requireContext()))
                     itemTouchHelper.attachToRecyclerView(recyclerView)
+
+                    adapter.notifyDataSetChanged()
                 }
                 is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE

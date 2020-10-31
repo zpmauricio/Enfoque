@@ -13,6 +13,11 @@ interface ProjectRepository {
     suspend fun saveProject(project: Project)
     suspend fun saveGoal(goal: Goal, selectedProject: Project)
     suspend fun saveKeyResult(keyResult: KeyResult, selectedProject: Project)
+    suspend fun saveTask(task: Task, selectedProject: Project)
+    suspend fun saveNote(note: Note, selectedProject: Project)
 
+    suspend fun deleteGoal(goal: Goal, selectedProject: Project)
     suspend fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project)
+    suspend fun deleteTask(task: Task, selectedProject: Project)
+    suspend fun deleteNote(note: Note, selectedProject: Project)
 }

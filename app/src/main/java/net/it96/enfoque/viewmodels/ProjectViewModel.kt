@@ -77,31 +77,65 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
         }
     }
 
-    // Involve the Dispatchers to use Coroutines and send the data to the Repository
+    /* Involve the Dispatchers to use Coroutines and send the data to the Repository */
+    /*
+        Add Data
+    */
     fun addProject(project: Project) {
         viewModelScope.launch(Dispatchers.IO) {
             projectRepository.saveProject(project)
         }
     }
 
-    // Involve the Dispatchers to use Coroutines and send the data to the Repository
     fun addGoal(goal: Goal, selectedProject: Project) {
         viewModelScope.launch(Dispatchers.IO) {
             projectRepository.saveGoal(goal, selectedProject)
         }
     }
 
-    // Involve the Dispatchers to use Coroutines and send the data to the Repository
     fun addKeyResult(keyResult: KeyResult, selectedProject: Project) {
+        Timber.i("***MZP***")
         viewModelScope.launch(Dispatchers.IO) {
             projectRepository.saveKeyResult(keyResult, selectedProject)
         }
     }
 
-    // Involve the Dispatchers to use Coroutines and send the data to the Repository
+    fun addTask(task: Task, selectedProject: Project) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.saveTask(task, selectedProject)
+        }
+    }
+
+    fun addNote(note: Note, selectedProject: Project) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.saveNote(note, selectedProject)
+        }
+    }
+
+    /*
+        Delete Data
+    */
+    fun deleteGoal(goal: Goal, selectedProject: Project){
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.deleteGoal(goal, selectedProject)
+        }
+    }
+
     fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project){
         viewModelScope.launch(Dispatchers.IO) {
             projectRepository.deleteKeyResult(keyResult, selectedProject)
+        }
+    }
+
+    fun deleteTask(task: Task, selectedProject: Project){
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.deleteTask(task, selectedProject)
+        }
+    }
+
+    fun deleteNote(note: Note, selectedProject: Project){
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.deleteNote(note, selectedProject)
         }
     }
 }

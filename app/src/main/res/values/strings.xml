@@ -21,5 +21,8 @@
     <string name="KeyResults">Key Results</string>
     <string name="Tasks">Tasks</string>
     <string name="NewGoal">e.g. Grow Sales by 30%</string>
+    <string name="NewKeyResult">e.g. Get a Promotion</string>
     <string name="Save">Save</string>
+    <string name="NewNote">e.g. Beware of distractions</string>
+    <string name="NewTask">e.g. Send Quote</string>
 </resources>

@@ -7,7 +7,7 @@
     tools:context=".fragments.goals.GoalsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_90daygoal"
+        android:id="@+id/rv_goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_button"
-        app:layout_constraintTop_toBottomOf="@id/rv_90daygoal"
+        app:layout_constraintTop_toBottomOf="@id/rv_goal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_keyResults"
         />
@@ -34,6 +34,6 @@
         android:text="@string/KeyResults"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_addGoal"
-        app:layout_constraintTop_toBottomOf="@id/rv_90daygoal" />
+        app:layout_constraintTop_toBottomOf="@id/rv_goal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="activeProject"
+            type="net.it96.enfoque.database.Project" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        tools:context=".ProjectActivity">
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardNewTask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardUseCompatPadding="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="260dp"
+                    android:layout_height="100dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/txt_projectName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{activeProject.name}"
+                        tools:text="Project Name"/>
+
+                    <EditText
+                        android:id="@+id/etxt_newTask"
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="@string/NewTask"
+                        android:ems="10"
+                        android:hint="@string/NewTask"
+                        android:inputType="textPersonName" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_saveNewTask"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/Save" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</layout>

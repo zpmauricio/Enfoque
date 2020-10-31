@@ -1,14 +1,17 @@
 package net.it96.enfoque.fragments.notes
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_notes.view.*
@@ -19,7 +22,6 @@ import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 class NotesFragment : Fragment() {
 
@@ -32,6 +34,12 @@ class NotesFragment : Fragment() {
             selectedProject.name)
     }
 
+    private lateinit var notesList : MutableList<Note>
+
+    private lateinit var deleteIcon: Drawable
+
+    private lateinit var adapter: NotesAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -39,12 +47,13 @@ class NotesFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_notes, container, false)
 
-        recyclerView = view.rv_notes
-        setupRecyclerView()
-
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
+
+        adapter = NotesAdapter(requireContext(), projectViewModel)
+        recyclerView = view.rv_notes
+        setupRecyclerView()
 
         // Start process to read from the database
         observeData()
@@ -53,11 +62,22 @@ class NotesFragment : Fragment() {
             findNavController().navigate(R.id.action_notesFragment_to_projectListFragment)
         }
 
+        view.btn_addNote.setOnClickListener {
+            val dialog = NoteAddFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("Project", selectedProject)
+            dialog.arguments = bundle
+            dialog.show(childFragmentManager, "AddNote")
+        }
+
+        deleteIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_delete)!!
+
         return view
     }
 
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
         recyclerView.addItemDecoration(
             DividerItemDecoration(
                 requireContext(),
@@ -76,9 +96,15 @@ class NotesFragment : Fragment() {
 //                    progressBar.visibility = View.GONE
 //                    binding.shimmerViewContainer.visibility = View.GONE
 //                    binding.shimmerViewContainer.stopShimmer()
-                    recyclerView.adapter = NotesAdapter(requireContext(),
-                        result.data as List<Note>)
-                    Timber.i("***MZP*** result: $result")
+                    @Suppress("UNCHECKED_CAST")
+                    notesList = result.data as MutableList<Note>
+                    adapter.setListData(notesList)
+                    recyclerView.adapter = adapter
+
+                    val itemTouchHelper = ItemTouchHelper(NoteDelete(recyclerView.adapter as NotesAdapter, selectedProject, requireContext()))
+                    itemTouchHelper.attachToRecyclerView(recyclerView)
+
+                    adapter.notifyDataSetChanged()
                 }
                 is Resource.Failure<*> -> {
 //                    progressBar.visibility = View.GONE
