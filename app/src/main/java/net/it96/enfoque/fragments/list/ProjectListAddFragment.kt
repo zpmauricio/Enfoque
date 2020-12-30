@@ -20,7 +20,7 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 class ProjectListAddFragment : Fragment() {
 
 //    private lateinit var mProjectViewModel: ProjectViewModel
-    private val mProjectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
         ProjectRepositoryImpl(), "") }
 
     override fun onCreateView(
@@ -57,10 +57,12 @@ class ProjectListAddFragment : Fragment() {
             }
 
             // Create new project
-            val project = Project("", projectName, "", arrayListOf(), "", "").apply { }
+            val project = Project("", projectName).apply { }
 
             // Call View Model and send the data to be stored
-            mProjectViewModel.addProject(project)
+            projectViewModel.addProject(project)
+            val adapter = ProjectListAdapter(requireContext(), projectViewModel, null)
+            adapter.addProject(adapter.itemCount, project)
 
             // Navigate Back
             findNavController().navigate(R.id.action_addFragment_to_listFragment)

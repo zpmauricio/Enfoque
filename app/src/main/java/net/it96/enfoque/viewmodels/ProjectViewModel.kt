@@ -15,8 +15,6 @@ import timber.log.Timber
  */
 class ProjectViewModel(private val projectRepository : ProjectRepository, private val param : String) : ViewModel() {
 
-    private val projectRepositoryImpl = ProjectRepositoryImpl()
-
     val getProjectList = liveData(Dispatchers.IO) {
         emit(Resource.Loading())
         try{
@@ -65,6 +63,18 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
         }
     }
 
+    val getTodayTasksList = liveData(Dispatchers.IO) {
+        emit(Resource.Loading())
+        try{
+            projectRepository.getTodayTasksList().collect {
+                emit(it)
+            }
+        } catch (e: Exception) {
+            emit(Resource.Failure(e))
+            Timber.e("***MZP*** ERROR GETTING TASKS LIST: $e")
+        }
+    }
+
     val getNotesList = liveData(Dispatchers.IO) {
         emit(Resource.Loading())
         try{
@@ -83,59 +93,92 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
     */
     fun addProject(project: Project) {
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.saveProject(project)
+            projectRepository.addProject(project)
         }
     }
 
-    fun addGoal(goal: Goal, selectedProject: Project) {
+    fun addGoal(goal: Goal) {
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.saveGoal(goal, selectedProject)
+            projectRepository.addGoal(goal)
         }
     }
 
-    fun addKeyResult(keyResult: KeyResult, selectedProject: Project) {
-        Timber.i("***MZP***")
+    fun addKeyResult(keyResult: KeyResult) {
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.saveKeyResult(keyResult, selectedProject)
+            projectRepository.addKeyResult(keyResult)
         }
     }
 
-    fun addTask(task: Task, selectedProject: Project) {
+    fun addTask(task: Task) {
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.saveTask(task, selectedProject)
+            projectRepository.addTask(task)
         }
     }
 
-    fun addNote(note: Note, selectedProject: Project) {
+    fun addNote(note: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.saveNote(note, selectedProject)
+            projectRepository.addNote(note)
+        }
+    }
+
+    /*
+        Edit Data
+    */
+
+    fun editGoal(goal: Goal) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.editGoal(goal)
+        }
+    }
+
+    fun editKeyResult(keyResult: KeyResult) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.editKeyResult(keyResult)
+        }
+    }
+
+    fun editTask(task: Task) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.editTask(task)
+        }
+    }
+
+    fun editNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.editNote(note)
         }
     }
 
     /*
         Delete Data
     */
-    fun deleteGoal(goal: Goal, selectedProject: Project){
+    fun deleteProject(project: Project){
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.deleteGoal(goal, selectedProject)
+            projectRepository.deleteProject(project)
         }
     }
 
-    fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project){
+    fun deleteGoal(goal: Goal){
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.deleteKeyResult(keyResult, selectedProject)
+            projectRepository.deleteGoal(goal)
         }
     }
 
-    fun deleteTask(task: Task, selectedProject: Project){
+    fun deleteKeyResult(keyResult: KeyResult){
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.deleteTask(task, selectedProject)
+            projectRepository.deleteKeyResult(keyResult)
         }
     }
 
-    fun deleteNote(note: Note, selectedProject: Project){
+    fun deleteTask(task: Task){
         viewModelScope.launch(Dispatchers.IO) {
-            projectRepository.deleteNote(note, selectedProject)
+            projectRepository.deleteTask(task)
+        }
+    }
+
+    fun deleteNote(note: Note){
+        viewModelScope.launch(Dispatchers.IO) {
+            projectRepository.deleteNote(note)
         }
     }
 }

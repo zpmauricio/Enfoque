@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_notes.view.*
@@ -29,10 +28,7 @@ class NotesFragment : Fragment() {
 
     private lateinit var selectedProject: Project
 
-    private val projectViewModel by viewModels<ProjectViewModel> {
-        ViewModelFactory(ProjectRepositoryImpl(),
-            selectedProject.name)
-    }
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), selectedProject.name) }
 
     private lateinit var notesList : MutableList<Note>
 
@@ -101,8 +97,8 @@ class NotesFragment : Fragment() {
                     adapter.setListData(notesList)
                     recyclerView.adapter = adapter
 
-                    val itemTouchHelper = ItemTouchHelper(NoteDelete(recyclerView.adapter as NotesAdapter, selectedProject, requireContext()))
-                    itemTouchHelper.attachToRecyclerView(recyclerView)
+//                    val itemTouchHelper = ItemTouchHelper(NoteDelete(recyclerView.adapter as NotesAdapter, selectedProject, requireContext()))
+//                    itemTouchHelper.attachToRecyclerView(recyclerView)
 
                     adapter.notifyDataSetChanged()
                 }

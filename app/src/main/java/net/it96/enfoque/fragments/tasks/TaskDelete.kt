@@ -9,9 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import net.it96.enfoque.R
-import net.it96.enfoque.database.Project
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
+import net.it96.enfoque.databinding.FragmentTodayBinding
 
-class TaskDelete (var adapter : TasksAdapter, var selectedProject : Project, var context : Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+class TaskDelete (var adapter : TasksAdapter, var context : Context, val fragmentProjectDetailBinding : FragmentProjectDetailBinding? = null, val fragmentTodayBinding: FragmentTodayBinding? = null) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
     private var swipeBackground: ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
     private lateinit var deleteIcon: Drawable
 
@@ -25,7 +26,11 @@ class TaskDelete (var adapter : TasksAdapter, var selectedProject : Project, var
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val task = adapter.getObject(viewHolder.adapterPosition)
-        adapter.deleteTask(task, selectedProject, viewHolder)
+        if(fragmentProjectDetailBinding != null) {
+            adapter.deleteTask(task, viewHolder, fragmentProjectDetailBinding, null)
+        } else if(fragmentTodayBinding != null) {
+            adapter.deleteTask(task, viewHolder, null, fragmentTodayBinding)
+        }
     }
 
     /*

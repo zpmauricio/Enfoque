@@ -10,8 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Project
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
 
-class NoteDelete (var adapter : NotesAdapter, var selectedProject : Project, var context : Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+class NoteDelete (var adapter : NotesAdapter, var selectedProject : Project, var context : Context, val binding : FragmentProjectDetailBinding) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
 
     private var swipeBackground: ColorDrawable = ColorDrawable(Color.parseColor("#FF0000"))
     private lateinit var deleteIcon: Drawable
@@ -26,7 +27,7 @@ class NoteDelete (var adapter : NotesAdapter, var selectedProject : Project, var
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         val note = adapter.getObject(viewHolder.adapterPosition)
-        adapter.deleteNote(note, selectedProject, viewHolder)
+        adapter.deleteNote(note, viewHolder, binding)
     }
 
     /*

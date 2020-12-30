@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.keyresult_row.view.*
-import net.it96.enfoque.R
 import net.it96.enfoque.database.KeyResult
-import net.it96.enfoque.database.Project
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
+import net.it96.enfoque.databinding.KeyresultRowBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 
 class KeyResultsAdapter(
@@ -19,6 +18,7 @@ class KeyResultsAdapter(
 
     private var removedPosition : Int = 0
     private var removedItem : KeyResult? = null
+    var topId : Int = 0
 
     private var keyResultsData = mutableListOf<KeyResult>()
 
@@ -26,8 +26,9 @@ class KeyResultsAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): KeyResultsAdapter.KeyResultsViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.keyresult_row, parent, false)
-        return KeyResultsViewHolder(view)
+        val itemBinding = KeyresultRowBinding.inflate(LayoutInflater.from(context), parent, false)
+
+        return KeyResultsViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: KeyResultsAdapter.KeyResultsViewHolder, position: Int) {
@@ -37,9 +38,23 @@ class KeyResultsAdapter(
 
     override fun getItemCount(): Int = keyResultsData.size
 
-    inner class KeyResultsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class KeyResultsViewHolder(val binding: KeyresultRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(keyResult: KeyResult) {
-            itemView.txt_keyResult.text = keyResult.description
+            binding.txtKeyResult.text = keyResult.description
+            binding.etxtEditKeyResult.setText(keyResult.description)
+            if(keyResult.id.toInt() > topId) topId = keyResult.id.toInt()
+
+            binding.cvRowKeyResults.setOnClickListener {
+                it.visibility = View.GONE
+                binding.cvRowEditKeyResults.visibility = View.VISIBLE
+            }
+
+            binding.ibSaveEditKeyResult.setOnClickListener {
+                keyResult.description = binding.etxtEditKeyResult.text.toString()
+                projectViewModel.editKeyResult(keyResult)
+                binding.cvRowEditKeyResults.visibility = View.GONE
+                binding.cvRowKeyResults.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -52,22 +67,20 @@ class KeyResultsAdapter(
     }
 
     fun addKeyResult(keyResult: KeyResult) {
-        keyResultsData.toMutableList().add(keyResult)
-        notifyDataSetChanged()
+        keyResultsData.add(keyResult)
     }
 
-    fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project, viewHolder: RecyclerView.ViewHolder) {
+    fun deleteKeyResult(keyResult: KeyResult, viewHolder: RecyclerView.ViewHolder, binding: FragmentProjectDetailBinding) {
         removedPosition = viewHolder.adapterPosition
         removedItem = keyResultsData[removedPosition]
 
         keyResultsData.removeAt(removedPosition)
-        projectViewModel.deleteKeyResult(keyResult, selectedProject)
+        projectViewModel.deleteKeyResult(keyResult)
         notifyItemRemoved(removedPosition)
 
-
-        Snackbar.make(viewHolder.itemView, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
-            projectViewModel.addKeyResult(keyResult, selectedProject)
-            keyResultsData.toMutableList().add(removedItem!!)
+        Snackbar.make(binding.clDetailMainLayout, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
+            projectViewModel.addKeyResult(keyResult)
+            addKeyResult(removedItem!!)
             notifyDataSetChanged()
         }.show()
     }

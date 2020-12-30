@@ -5,5 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class KeyResult (
-    var description : String = ""
+    val id : String = "0",
+    var description : String = "",
+    val projectName : String = ""
 ) : Parcelable

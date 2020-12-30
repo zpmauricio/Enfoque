@@ -25,10 +25,12 @@ class GoalAddFragment : DialogFragment() {
 
     private lateinit var binding: AddGoalBinding
 
+    private var topId : Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
 
         // Inflate view and obtain an instance of the binding class
         this.binding = DataBindingUtil.inflate(
@@ -41,6 +43,7 @@ class GoalAddFragment : DialogFragment() {
         // Call View Model and send the data to be stored
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
+            topId = it.getInt("topId")
         }
 
         binding.btnSaveNewGoal.setOnClickListener {
@@ -64,9 +67,9 @@ class GoalAddFragment : DialogFragment() {
             }
 
             // Create new goal
-            val goal = Goal(newGoal).apply { }
+            val goal = Goal("${topId + 1}", newGoal, selectedProject.name).apply {  }
 
-            projectViewModel.addGoal(goal, selectedProject)
+            projectViewModel.addGoal(goal)
             val adapter = GoalsAdapter(requireContext(), projectViewModel)
             adapter.addGoal(goal)
 

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="nav_header_title">@string/app_name</string>
+    <string name="nav_header_subtitle">Traza objetivos y los resultados que buscas</string>
+    <string name="nav_header_desc">IT96</string>
     <string name="app_name">Enfoque</string>
-    <string name="tab_text_1">Proyectos</string>
-    <string name="tab_text_2">Hoy</string>
+    <string name="projects">Proyectos</string>
+    <string name="today">Hoy</string>
+    <string name="calendar">Calendario</string>
+    <string name="labels">Etiquetas</string>
+    <string name="priorities">Prioridades</string>
     <string name="add_button">+</string>
     <string name="addProject">+</string>
     <string name="ProjectName">Nombre del Proyecto</string>
@@ -11,7 +17,7 @@
     <string name="Goals2W">Objetivos a 2 semanas</string>
     <string name="Actions">Acciones</string>
     <string name="Notes">Notas</string>
-    <string name="AddProject">Agregar</string>
+    <string name="add">Agregar</string>
     <string name="SuccessfullyAdded">Guardado exitosamente</string>
     <string name="FillRequiredFields">Favor de llenar los campos requeridos</string>
     <string name="hello_blank_fragment">Hola blank fragment</string>
@@ -25,4 +31,6 @@
     <string name="Save">Guardar</string>
     <string name="NewNote">ej. Evitar distracciones</string>
     <string name="NewTask">ej. Enviar Cotización</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="NoDate">Sin Fecha</string>
 </resources>

@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.goal_row.view.*
-import net.it96.enfoque.R
 import net.it96.enfoque.database.Goal
-import net.it96.enfoque.database.Project
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
+import net.it96.enfoque.databinding.GoalRowBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 
 class GoalsAdapter(
@@ -19,6 +18,7 @@ class GoalsAdapter(
 
     private var removedPosition : Int = 0
     private var removedItem : Goal? = null
+    var topId : Int = 0
 
     private var goalsData = mutableListOf<Goal>()
 
@@ -26,8 +26,9 @@ class GoalsAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): GoalsAdapter.GoalsViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.goal_row, parent, false)
-        return GoalsViewHolder(view)
+        val itemBinding = GoalRowBinding.inflate(LayoutInflater.from(context), parent, false)
+
+        return GoalsViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: GoalsAdapter.GoalsViewHolder, position: Int) {
@@ -37,9 +38,23 @@ class GoalsAdapter(
 
     override fun getItemCount(): Int = goalsData.size
 
-    inner class GoalsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class GoalsViewHolder(val binding: GoalRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(goal: Goal) {
-            itemView.txt_goal.text = goal.description
+            binding.txtGoal.text = goal.description
+            binding.etxtEditGoal.setText(goal.description)
+            if(goal.id.toInt() > topId) topId = goal.id.toInt()
+
+            binding.cvRowGoals.setOnClickListener {
+                it.visibility = View.GONE
+                binding.cvRowEditGoals.visibility = View.VISIBLE
+            }
+
+            binding.ibSaveEditGoal.setOnClickListener {
+                goal.description = binding.etxtEditGoal.text.toString()
+                projectViewModel.editGoal(goal)
+                binding.cvRowEditGoals.visibility = View.GONE
+                binding.cvRowGoals.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -52,22 +67,20 @@ class GoalsAdapter(
     }
 
     fun addGoal(goal: Goal) {
-        goalsData.toMutableList().add(goal)
-        notifyDataSetChanged()
+        goalsData.add(goal)
     }
 
-    fun deleteGoal(goal: Goal, selectedProject: Project, viewHolder: RecyclerView.ViewHolder) {
+    fun deleteGoal(goal: Goal, viewHolder: RecyclerView.ViewHolder, binding: FragmentProjectDetailBinding) {
         removedPosition = viewHolder.adapterPosition
         removedItem = goalsData[removedPosition]
 
         goalsData.removeAt(removedPosition)
-        projectViewModel.deleteGoal(goal, selectedProject)
+        projectViewModel.deleteGoal(goal)
         notifyItemRemoved(removedPosition)
 
-
-        Snackbar.make(viewHolder.itemView, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
-            projectViewModel.addGoal(goal, selectedProject)
-            goalsData.toMutableList().add(removedItem!!)
+        Snackbar.make(binding.clDetailMainLayout, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
+            projectViewModel.addGoal(goal)
+            addGoal(removedItem!!)
             notifyDataSetChanged()
         }.show()
     }

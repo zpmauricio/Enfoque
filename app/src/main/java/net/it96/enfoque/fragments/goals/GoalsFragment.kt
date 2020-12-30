@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_goals.view.*
@@ -103,8 +102,8 @@ class GoalsFragment : Fragment() {
                     adapter.setListData(goalsList)
                     recyclerView.adapter = adapter
 
-                    val itemTouchHelper = ItemTouchHelper(GoalDelete(recyclerView.adapter as GoalsAdapter, selectedProject, requireContext()))
-                    itemTouchHelper.attachToRecyclerView(recyclerView)
+//                    val itemTouchHelper = ItemTouchHelper(GoalDelete(recyclerView.adapter as GoalsAdapter, selectedProject, requireContext()))
+//                    itemTouchHelper.attachToRecyclerView(recyclerView)
 
                     adapter.notifyDataSetChanged()
                 }

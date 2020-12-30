@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/projectListFragment"
         android:name="net.it96.enfoque.fragments.list.ProjectListFragment"
-        android:label="@string/tab_text_1"
+        android:label="@string/projects"
         tools:layout="@layout/fragment_project_list">
         <action
             android:id="@+id/action_listFragment_to_addFragment"
@@ -20,7 +20,7 @@
     <fragment
         android:id="@+id/projectAddFragment"
         android:name="net.it96.enfoque.fragments.list.ProjectListAddFragment"
-        android:label="@string/AddProject"
+        android:label="@string/add"
         tools:layout="@layout/project_add">
         <action
             android:id="@+id/action_addFragment_to_listFragment"
@@ -29,11 +29,11 @@
     <fragment
         android:id="@+id/fragment_today"
         android:name="net.it96.enfoque.fragments.today.TodayFragment"
-        android:label="fragment_today"
+        android:label="@string/today"
         tools:layout="@layout/fragment_today" />
     <fragment
         android:id="@+id/projectDetailFragment"
-        android:name="net.it96.enfoque.fragments.ProjectDetailFragment"
+        android:name="net.it96.enfoque.fragments.list.ProjectListDetailFragment"
         android:label="@string/ProjectName"
         tools:layout="@layout/fragment_project_detail" >
         <action

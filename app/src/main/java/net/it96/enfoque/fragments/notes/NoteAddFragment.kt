@@ -19,17 +19,18 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 
 class NoteAddFragment : DialogFragment() {
 
-    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
-        ProjectRepositoryImpl(), "") }
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), "") }
 
     private lateinit var selectedProject: Project
 
     private lateinit var binding: AddNoteBinding
 
+    private var topId : Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate view and obtain an instance of the binding class
         this.binding = DataBindingUtil.inflate(
             inflater,
@@ -41,6 +42,7 @@ class NoteAddFragment : DialogFragment() {
         // Call View Model and send the data to be stored
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
+            topId = it.getInt("topId")
         }
 
         binding.btnSaveNewNote.setOnClickListener {
@@ -64,9 +66,9 @@ class NoteAddFragment : DialogFragment() {
             }
 
             // Create new note
-            val note = Note(newNote).apply { }
+            val note = Note("${topId + 1}", newNote, selectedProject.name).apply { }
 
-            projectViewModel.addNote(note, selectedProject)
+            projectViewModel.addNote(note)
             val adapter = NotesAdapter(requireContext(), projectViewModel)
             adapter.addNote(note)
 

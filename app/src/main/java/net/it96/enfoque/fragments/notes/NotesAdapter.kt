@@ -6,10 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.note_row.view.*
-import net.it96.enfoque.R
 import net.it96.enfoque.database.Note
-import net.it96.enfoque.database.Project
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
+import net.it96.enfoque.databinding.NoteRowBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 
 class NotesAdapter (
@@ -19,6 +18,7 @@ class NotesAdapter (
 
     private var removedPosition : Int = 0
     private var removedItem : Note? = null
+    var topId : Int = 0
 
     private var notesData = mutableListOf<Note>()
 
@@ -26,8 +26,9 @@ class NotesAdapter (
         parent: ViewGroup,
         viewType: Int,
     ): NotesAdapter.NotesViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.note_row, parent, false)
-        return NotesViewHolder(view)
+        val itemBinding = NoteRowBinding.inflate(LayoutInflater.from(context), parent, false)
+
+        return NotesViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: NotesAdapter.NotesViewHolder, position: Int) {
@@ -37,9 +38,23 @@ class NotesAdapter (
 
     override fun getItemCount(): Int = notesData.size
 
-    inner class NotesViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class NotesViewHolder(val binding: NoteRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(note: Note) {
-            itemView.txt_note.text = note.description
+            binding.txtNote.text = note.description
+            binding.etxtEditNote.setText(note.description)
+            if(note.id.toInt() > topId) topId = note.id.toInt()
+
+            binding.cvRowNotes.setOnClickListener {
+                it.visibility = View.GONE
+                binding.cvRowEditNotes.visibility = View.VISIBLE
+            }
+
+            binding.ibSaveEditNote.setOnClickListener {
+                note.description = binding.etxtEditNote.text.toString()
+                projectViewModel.editNote(note)
+                binding.cvRowEditNotes.visibility = View.GONE
+                binding.cvRowNotes.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -52,22 +67,21 @@ class NotesAdapter (
     }
 
     fun addNote(note: Note) {
-        notesData.toMutableList().add(note)
-        notifyDataSetChanged()
+        notesData.add(note)
     }
 
-    fun deleteNote(note: Note, selectedProject: Project, viewHolder: RecyclerView.ViewHolder) {
+    fun deleteNote(note: Note, viewHolder: RecyclerView.ViewHolder, binding : FragmentProjectDetailBinding) {
         removedPosition = viewHolder.adapterPosition
         removedItem = notesData[removedPosition]
 
         notesData.removeAt(removedPosition)
-        projectViewModel.deleteNote(note, selectedProject)
+        projectViewModel.deleteNote(note)
         notifyItemRemoved(removedPosition)
 
 
-        Snackbar.make(viewHolder.itemView, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
-            projectViewModel.addNote(note, selectedProject)
-            notesData.toMutableList().add(removedItem!!)
+        Snackbar.make(binding.clDetailMainLayout, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
+            projectViewModel.addNote(note)
+            addNote(removedItem!!)
             notifyDataSetChanged()
         }.show()
     }

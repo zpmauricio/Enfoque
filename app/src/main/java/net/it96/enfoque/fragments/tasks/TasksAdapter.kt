@@ -4,12 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.task_row.view.*
-import net.it96.enfoque.R
-import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.Task
+import net.it96.enfoque.databinding.FragmentProjectDetailBinding
+import net.it96.enfoque.databinding.FragmentTodayBinding
+import net.it96.enfoque.databinding.TaskRowBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 
 class TasksAdapter(
@@ -19,6 +21,7 @@ class TasksAdapter(
 
     private var removedPosition : Int = 0
     private var removedItem : Task? = null
+    var topId : Int = 0
 
     private var tasksData = mutableListOf<Task>()
 
@@ -26,8 +29,9 @@ class TasksAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): TasksAdapter.TasksViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.task_row, parent, false)
-        return TasksViewHolder(view)
+        val itemBinding = TaskRowBinding.inflate(LayoutInflater.from(context), parent, false)
+
+        return TasksViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: TasksAdapter.TasksViewHolder, position: Int) {
@@ -37,9 +41,41 @@ class TasksAdapter(
 
     override fun getItemCount(): Int = tasksData.size
 
-    inner class TasksViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class TasksViewHolder(val binding: TaskRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(task: Task) {
-            itemView.txt_task.text = task.description
+            binding.txtTask.text = task.description
+            binding.txtDate.text = task.date
+            binding.etxtEditTask.setText(task.description)
+            binding.editTaskDate.text = task.date
+            if(task.id.toInt() > topId) topId = task.id.toInt()
+
+            binding.cvRowTasks.setOnClickListener {
+                it.visibility = View.GONE
+                binding.cvRowEditTasks.visibility = View.VISIBLE
+            }
+
+            binding.ibSaveEditTask.setOnClickListener {
+                task.description = binding.etxtEditTask.text.toString()
+                task.date = binding.editTaskDate.text.toString()
+                projectViewModel.editTask(task)
+                binding.cvRowEditTasks.visibility = View.GONE
+                binding.cvRowTasks.visibility = View.VISIBLE
+                notifyDataSetChanged()
+            }
+
+            val builder : MaterialDatePicker.Builder<*> = MaterialDatePicker.Builder.datePicker()
+
+            builder.setTitleText("Select a Date")
+            val picker : MaterialDatePicker<*> = builder.build()
+
+            binding.editTaskDate.setOnClickListener {
+                picker.show((context as AppCompatActivity).supportFragmentManager, picker.toString())
+            }
+
+            picker.addOnPositiveButtonClickListener {
+                binding.editTaskDate.text = picker.headerText
+            }
+
         }
     }
 
@@ -52,23 +88,33 @@ class TasksAdapter(
     }
 
     fun addTask(task: Task) {
-        tasksData.toMutableList().add(task)
-        notifyDataSetChanged()
+        tasksData.add(task)
     }
 
-    fun deleteTask(task: Task, selectedProject: Project, viewHolder: RecyclerView.ViewHolder) {
+    fun deleteTask(task: Task, viewHolder: RecyclerView.ViewHolder, fragmentProjectDetailBinding : FragmentProjectDetailBinding? = null, fragmentTodayBinding: FragmentTodayBinding?) {
         removedPosition = viewHolder.adapterPosition
         removedItem = tasksData[removedPosition]
 
         tasksData.removeAt(removedPosition)
-        projectViewModel.deleteTask(task, selectedProject)
+        projectViewModel.deleteTask(task)
         notifyItemRemoved(removedPosition)
 
-
-        Snackbar.make(viewHolder.itemView, "${removedItem!!.description} deleted.", Snackbar.LENGTH_LONG).setAction("UNDO") {
-            projectViewModel.addTask(task, selectedProject)
-            tasksData.toMutableList().add(removedItem!!)
-            notifyDataSetChanged()
-        }.show()
+        if(fragmentProjectDetailBinding != null) {
+            Snackbar.make(fragmentProjectDetailBinding.clDetailMainLayout,
+                "${removedItem!!.description} deleted.",
+                Snackbar.LENGTH_LONG).setAction("UNDO") {
+                projectViewModel.addTask(task)
+                addTask(removedItem!!)
+                notifyDataSetChanged()
+            }.show()
+        } else if(fragmentTodayBinding != null) {
+            Snackbar.make(fragmentTodayBinding.clTodayLayout,
+                "${removedItem!!.description} deleted.",
+                Snackbar.LENGTH_LONG).setAction("UNDO") {
+                projectViewModel.addTask(task)
+                addTask(removedItem!!)
+                notifyDataSetChanged()
+            }.show()
+        }
     }
 }

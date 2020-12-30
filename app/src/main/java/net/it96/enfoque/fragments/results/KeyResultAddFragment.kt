@@ -19,17 +19,18 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 
 class KeyResultAddFragment : DialogFragment() {
 
-    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
-        ProjectRepositoryImpl(), "") }
+    private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), "") }
 
     private lateinit var selectedProject: Project
 
     private lateinit var binding: AddKeyResultBinding
 
+    private var topId : Int = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate view and obtain an instance of the binding class
         this.binding = DataBindingUtil.inflate(
             inflater,
@@ -41,6 +42,7 @@ class KeyResultAddFragment : DialogFragment() {
         // Call View Model and send the data to be stored
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
+            topId = it.getInt("topId")
         }
 
         binding.btnSaveNewKeyResult.setOnClickListener {
@@ -64,9 +66,9 @@ class KeyResultAddFragment : DialogFragment() {
             }
 
             // Create new Key Result
-            val keyResult = KeyResult(newKeyResult).apply { }
+            val keyResult = KeyResult("${topId + 1}", newKeyResult, selectedProject.name).apply { }
 
-            projectViewModel.addKeyResult(keyResult, selectedProject)
+            projectViewModel.addKeyResult(keyResult)
             val adapter = KeyResultsAdapter(requireContext(), projectViewModel)
             adapter.addKeyResult(keyResult)
 

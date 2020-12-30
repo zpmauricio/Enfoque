@@ -1,14 +1,19 @@
 package net.it96.enfoque
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.*
+import com.firebase.ui.auth.AuthUI
+import com.google.android.material.navigation.NavigationView
+import net.it96.enfoque.databinding.ActivityProjectBinding
 import timber.log.Timber
 
 class ProjectActivity : AppCompatActivity() {
@@ -16,11 +21,16 @@ class ProjectActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration : AppBarConfiguration
     private lateinit var navController: NavController
 
+    private var _binding: ActivityProjectBinding? = null
+    private val binding get() = _binding!!
+
 //    private val adapter by lazy { ViewPagerAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_project)
+        _binding = ActivityProjectBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 //        viewPager2.adapter = adapter
 //        val tabLayoutMediator = TabLayoutMediator(tab_layout, viewPager2) { tab, position ->
 //            when (position + 1) {
@@ -33,53 +43,24 @@ class ProjectActivity : AppCompatActivity() {
 
         Timber.i("MZP onCreate")
 
-//        val toolbar : Toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
+        val toolbar : Toolbar = binding.toolbar
+        setSupportActionBar(toolbar)
 
-        navController = findNavController(R.id.navHostFragment)
-        NavigationUI.setupActionBarWithNavController(this, navController)
 
-//        val drawerLayout: DrawerLayout = findViewById(R.id.drawer)
-//        val navigationView: NavigationView = findViewById(R.id.nav_view)
-
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.fragment_today,
-//                R.id.projectListFragment
-//            ), drawerLayout
-//        )
+        appBarConfiguration = AppBarConfiguration(setOf(
+             R.id.projectListFragment, R.id.fragment_today
+            ,R.id.nav_calendar, R.id.nav_settings, R.id.nav_labels, R.id.nav_priorities
+        ), drawerLayout)
 
-//        supportFragmentManager.beginTransaction()
-//            .add(R.id.navHostFragment, ProjectListFragment())
-//            .commit()
-
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-//        navigationView.setupWithNavController(navController)
-
-
-//        val fab: FloatingActionButton = findViewById(R.id.floatingActionButton)
-//        fab.setOnClickListener {
-//            navController.navigate(ProjectListFragmentDirections.actionListFragmentToAddFragment2())
-//        }
-
-
-//        val tabLayout = this.tab_layout
-//        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-//
-//            override fun onTabSelected(tab: TabLayout.Tab?) {
-//                // Handle tab select
-//            }
-//
-//            override fun onTabReselected(tab: TabLayout.Tab?) {
-//                // Handle tab reselect
-//            }
-//
-//            override fun onTabUnselected(tab: TabLayout.Tab?) {
-//                // Handle tab unselect
-//            }
-//        })
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
+        navController = navHostFragment.navController
+        NavigationUI.setupActionBarWithNavController(this, navController)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -89,12 +70,8 @@ class ProjectActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
-//    override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.navHostFragment)
-//        return navController.navigateUp() || super.onSupportNavigateUp()
-//    }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_settings -> {
@@ -110,12 +87,12 @@ class ProjectActivity : AppCompatActivity() {
         }
     }
 
-//    private fun signOut(){
-//        AuthUI.getInstance().signOut(this).addOnSuccessListener {
-//            startActivity(Intent(this, LoginActivity::class.java))
-//            finish()
-//        }.addOnFailureListener{
-//            Toast.makeText(this, "Ocurrio un error ${it.message}", Toast.LENGTH_SHORT).show()
-//        }
-//    }
+    private fun signOut(){
+        AuthUI.getInstance().signOut(this).addOnSuccessListener {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+        }.addOnFailureListener{
+            Toast.makeText(this, "Ocurrio un error ${it.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 }

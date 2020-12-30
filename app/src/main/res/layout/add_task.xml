@@ -8,6 +8,7 @@
         <variable
             name="activeProject"
             type="net.it96.enfoque.database.Project" />
+
     </data>
 
     <LinearLayout
@@ -20,23 +21,17 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardNewTask"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
             app:cardUseCompatPadding="true">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
                 <LinearLayout
-                    android:layout_width="260dp"
-                    android:layout_height="100dp"
-                    android:layout_marginEnd="10dp"
+                    android:id="@+id/ll_inner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
                     android:orientation="vertical"
-                    android:padding="10dp">
+                    android:padding="4dp">
 
                     <TextView
                         android:id="@+id/txt_projectName"
@@ -47,21 +42,39 @@
 
                     <EditText
                         android:id="@+id/etxt_newTask"
-                        android:layout_width="230dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="@string/NewTask"
                         android:ems="10"
                         android:hint="@string/NewTask"
                         android:inputType="textPersonName" />
-                </LinearLayout>
 
-                <Button
-                    android:id="@+id/btn_saveNewTask"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/Save" />
-            </LinearLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/addTaskDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/NoDate"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Date" />
+
+                        <ImageButton
+                            android:id="@+id/ib_saveNewTask"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/Save"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_save" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
 
         </androidx.cardview.widget.CardView>
 

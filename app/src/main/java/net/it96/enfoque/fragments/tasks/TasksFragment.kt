@@ -10,8 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.fragment_tasks.view.*
@@ -64,7 +62,7 @@ class TasksFragment : Fragment() {
             findNavController().navigate(R.id.action_tasksFragment_to_notesFragment, bundle)
         }
 
-        view.btn_addTask.setOnClickListener {
+        view.fab_tasks.setOnClickListener {
             val dialog = TaskAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
@@ -80,12 +78,12 @@ class TasksFragment : Fragment() {
     private fun setupRecyclerView() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                requireContext(),
-                DividerItemDecoration.VERTICAL
-            )
-        )
+//        recyclerView.addItemDecoration(
+//            DividerItemDecoration(
+//                requireContext(),
+//                DividerItemDecoration.VERTICAL
+//            )
+//        )
     }
 
     private fun observeData() {
@@ -103,8 +101,8 @@ class TasksFragment : Fragment() {
                     adapter.setListData(tasksList)
                     recyclerView.adapter = adapter
 
-                    val itemTouchHelper = ItemTouchHelper(TaskDelete(recyclerView.adapter as TasksAdapter, selectedProject, requireContext()))
-                    itemTouchHelper.attachToRecyclerView(recyclerView)
+//                    val itemTouchHelper = ItemTouchHelper(TaskDelete(recyclerView.adapter as TasksAdapter, selectedProject, requireContext()))
+//                    itemTouchHelper.attachToRecyclerView(recyclerView)
 
                     adapter.notifyDataSetChanged()
                 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/projectListFragment"
+            android:icon="@drawable/ic_menu_work"
+            android:title="@string/projects" />
+        <item
+            android:id="@+id/fragment_today"
+            android:icon="@drawable/ic_menu_today"
+            android:title="@string/today" />
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_menu_calendar"
+            android:title="@string/calendar" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_settings"
+            android:title="@string/settings" />
+        <item
+            android:id="@+id/nav_labels"
+            android:icon="@drawable/ic_menu_labels"
+            android:title="@string/labels" />
+        <item
+            android:id="@+id/nav_priorities"
+            android:icon="@drawable/ic_menu_priorities"
+            android:title="@string/priorities" />
+    </group>
+</menu>

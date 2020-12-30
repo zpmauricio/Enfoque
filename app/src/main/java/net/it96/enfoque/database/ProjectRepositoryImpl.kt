@@ -1,5 +1,7 @@
 package net.it96.enfoque.database
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
@@ -10,6 +12,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import net.it96.enfoque.vo.Resource
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 /**
  * Clase para hacer los queries a la base de datos
@@ -56,7 +61,7 @@ class ProjectRepositoryImpl : ProjectRepository {
 
     @ExperimentalCoroutinesApi
     override suspend fun getGoalsList(selectedProject: String): Flow<Resource<List<Goal>>> = callbackFlow {
-        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Goals")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Goals").orderBy("id")
         val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 val goalsList = collectionSnapshot.toObjects(Goal::class.java)
@@ -88,8 +93,8 @@ class ProjectRepositoryImpl : ProjectRepository {
 
     @ExperimentalCoroutinesApi
     override suspend fun getTasksList(selectedProject: String): Flow<Resource<List<Task>>> = callbackFlow {
-        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Tasks")
-        val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+        val tasksListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Tasks")
+        val subscription = tasksListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 val tasksList = collectionSnapshot.toObjects(Task::class.java)
                 offer(Resource.Success(tasksList))
@@ -97,6 +102,33 @@ class ProjectRepositoryImpl : ProjectRepository {
             if(firestoreError != null) {
                 channel.close(firestoreError.cause)
             }
+        }
+
+        awaitClose { subscription.remove() }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @ExperimentalCoroutinesApi
+    override suspend fun getTodayTasksList(): Flow<Resource<List<Task>>> = callbackFlow {
+        val date = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+        val today = date.format(formatter).substring(0, 12)
+        Timber.i("MZP today's date: $today")
+//        val todayTasksListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document("Focus App").collection("Tasks").whereEqualTo("date", today)
+        val todayTasksListCollection = firestore.collectionGroup("Tasks").whereEqualTo("date", today).whereEqualTo("userEmail",user!!.email!!.toString())
+        val subscription = todayTasksListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
+            try {
+                if(!collectionSnapshot!!.isEmpty) {
+                    val tasksList = collectionSnapshot.toObjects(Task::class.java)
+                    offer(Resource.Success(tasksList))
+                }
+                if(firestoreError != null) {
+                    channel.close(firestoreError.cause)
+                }
+            } catch (e: Exception){
+                Timber.i("MZP An error occurred: $firestoreError -- ${e.printStackTrace()}")
+            }
+
         }
 
         awaitClose { subscription.remove() }
@@ -120,9 +152,9 @@ class ProjectRepositoryImpl : ProjectRepository {
 
     // Receives the data and stores it on Firestore
     /*
-    * Save New Data
+    * Add New Data
     * */
-    override suspend fun saveProject(project: Project) {
+    override suspend fun addProject(project: Project) {
         firestore.collection("users")
             .document(user!!.email!!)
             .collection("Projects")
@@ -136,13 +168,14 @@ class ProjectRepositoryImpl : ProjectRepository {
             }
     }
 
-    override suspend fun saveGoal(goal: Goal, selectedProject: Project) {
+    override suspend fun addGoal(goal: Goal) {
         firestore.collection("users")
             .document(user!!.email!!)
             .collection("Projects")
-            .document(selectedProject.name)
+            .document(goal.projectName)
             .collection("Goals")
-            .add(goal)
+            .document(goal.id)
+            .set(goal)
             .addOnSuccessListener {
                 Timber.i("***MZP*** Goal saved")
             }
@@ -151,13 +184,14 @@ class ProjectRepositoryImpl : ProjectRepository {
             }
     }
 
-    override suspend fun saveKeyResult(keyResult: KeyResult, selectedProject: Project) {
+    override suspend fun addKeyResult(keyResult: KeyResult) {
         firestore.collection("users")
             .document(user!!.email!!)
             .collection("Projects")
-            .document(selectedProject.name)
+            .document(keyResult.projectName)
             .collection("Results")
-            .add(keyResult)
+            .document(keyResult.id)
+            .set(keyResult)
             .addOnSuccessListener {
                 Timber.i("***MZP*** Key Result saved")
             }
@@ -166,13 +200,30 @@ class ProjectRepositoryImpl : ProjectRepository {
             }
     }
 
-    override suspend fun saveTask(task: Task, selectedProject: Project) {
+    override suspend fun addTask(task: Task) {
         firestore.collection("users")
             .document(user!!.email!!)
             .collection("Projects")
-            .document(selectedProject.name)
+            .document(task.projectName)
             .collection("Tasks")
-            .add(task)
+            .document(task.id)
+            .set(task)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Task saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
+    }
+
+    override suspend fun addNote(note: Note) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(note.projectName)
+            .collection("Notes")
+            .document(note.id)
+            .set(note)
             .addOnSuccessListener {
                 Timber.i("***MZP*** Note saved")
             }
@@ -181,13 +232,66 @@ class ProjectRepositoryImpl : ProjectRepository {
             }
     }
 
-    override suspend fun saveNote(note: Note, selectedProject: Project) {
+    /*
+    * Edit Data
+    * */
+
+    override suspend fun editGoal(goal: Goal) {
         firestore.collection("users")
             .document(user!!.email!!)
             .collection("Projects")
-            .document(selectedProject.name)
+            .document(goal.projectName)
+            .collection("Goals")
+            .document(goal.id)
+            .set(goal)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Goal saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
+    }
+
+    override suspend fun editKeyResult(keyResult: KeyResult) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(keyResult.projectName)
+            .collection("Results")
+            .document(keyResult.id)
+            .set(keyResult)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Key Result saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
+    }
+
+    override suspend fun editTask(task: Task) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(task.projectName)
+            .collection("Tasks")
+            .document(task.id)
+            .set(task)
+            .addOnSuccessListener {
+                Timber.i("***MZP*** Task saved")
+            }
+            .addOnFailureListener {
+                Timber.e("***MZP*** Saved failed")
+            }
+    }
+
+    override suspend fun editNote(note: Note) {
+        firestore.collection("users")
+            .document(user!!.email!!)
+            .collection("Projects")
+            .document(note.projectName)
             .collection("Notes")
-            .add(note)
+            .document(note.id)
+            .set(note)
             .addOnSuccessListener {
                 Timber.i("***MZP*** Note saved")
             }
@@ -200,39 +304,44 @@ class ProjectRepositoryImpl : ProjectRepository {
     * Delete Data
     * */
 
-    override suspend fun deleteGoal(goal: Goal, selectedProject: Project){
+    override suspend fun deleteProject(selectedProject: Project){
+        // Get the Project document to delete
+        firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).delete().await()
+    }
+
+    override suspend fun deleteGoal(goal: Goal){
         // Get the collection that include the documents that match with the query
-        val goalListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).collection("Goals").whereEqualTo("description",goal.description).get().await()
+        val goalListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(goal.projectName).collection("Goals").whereEqualTo("description",goal.description).get().await()
 
         goalListSnapshot.forEach{doc ->
-            firestore.collection("users").document(user.email!!).collection("Projects").document(selectedProject.name).collection("Goals").document(doc.id).delete().await()
+            firestore.collection("users").document(user.email!!).collection("Projects").document(goal.projectName).collection("Goals").document(doc.id).delete().await()
         }
     }
 
-    override suspend fun deleteKeyResult(keyResult: KeyResult, selectedProject: Project){
+    override suspend fun deleteKeyResult(keyResult: KeyResult){
         // Get the collection that include the documents that match with the query
-        val keyResultListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).collection("Results").whereEqualTo("description",keyResult.description).get().await()
+        val keyResultListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(keyResult.projectName).collection("Results").whereEqualTo("description",keyResult.description).get().await()
 
         keyResultListSnapshot.forEach{doc ->
-            firestore.collection("users").document(user.email!!).collection("Projects").document(selectedProject.name).collection("Results").document(doc.id).delete().await()
+            firestore.collection("users").document(user.email!!).collection("Projects").document(keyResult.projectName).collection("Results").document(doc.id).delete().await()
         }
     }
 
-    override suspend fun deleteTask(task: Task, selectedProject: Project) {
+    override suspend fun deleteTask(task: Task) {
         // Get the collection that include the documents that match with the query
-        val noteListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).collection("Tasks").whereEqualTo("description",task.description).get().await()
+        val noteListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(task.projectName).collection("Tasks").whereEqualTo("description",task.description).get().await()
 
         noteListSnapshot.forEach{doc ->
-            firestore.collection("users").document(user.email!!).collection("Projects").document(selectedProject.name).collection("Tasks").document(doc.id).delete().await()
+            firestore.collection("users").document(user.email!!).collection("Projects").document(task.projectName).collection("Tasks").document(doc.id).delete().await()
         }
     }
 
-    override suspend fun deleteNote(note: Note, selectedProject: Project) {
+    override suspend fun deleteNote(note: Note) {
         // Get the collection that include the documents that match with the query
-        val noteListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject.name).collection("Notes").whereEqualTo("description",note.description).get().await()
+        val noteListSnapshot = firestore.collection("users").document(user!!.email!!).collection("Projects").document(note.projectName).collection("Notes").whereEqualTo("description",note.description).get().await()
 
         noteListSnapshot.forEach{doc ->
-            firestore.collection("users").document(user.email!!).collection("Projects").document(selectedProject.name).collection("Notes").document(doc.id).delete().await()
+            firestore.collection("users").document(user.email!!).collection("Projects").document(note.projectName).collection("Notes").document(doc.id).delete().await()
         }
     }
 }
