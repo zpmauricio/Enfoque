@@ -70,7 +70,7 @@ class ProjectRepositoryImpl : ProjectRepository {
                 var goal : Goal? = collectionSnapshot.documents[0].toObject(Goal::class.java)
                 Log.i(TAG, "MZP goal: ${goal}")
                 goal = collectionSnapshot.documents[2].toObject(Goal::class.java)
-                Log.i(TAG, "MZP goal: ${goal}")
+                Log.i(TAG, "MZP  goal: ${goal}")
                 val goalsList = collectionSnapshot.toObjects(Goal::class.java)
                 goalsList.sortBy { goal?.id }
                 offer(Resource.Success(goalsList))
