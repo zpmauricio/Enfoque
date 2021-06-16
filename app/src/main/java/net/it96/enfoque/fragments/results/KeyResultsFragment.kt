@@ -13,11 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_results.view.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.KeyResult
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.databinding.FragmentResultsBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
@@ -39,31 +39,35 @@ class KeyResultsFragment : Fragment() {
 
     private lateinit var adapter: KeyResultsAdapter
 
+    private var _binding: FragmentResultsBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_results, container, false)
+        _binding = FragmentResultsBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
 
         adapter = KeyResultsAdapter(requireContext(), projectViewModel)
-        recyclerView = view.rv_keyResults
+        recyclerView = binding.rvKeyResults
         setupRecyclerView()
 
         // Start process to read from the database
         observeData()
 
-        view.btn_tasks.setOnClickListener {
+        binding.btnTasks.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             findNavController().navigate(R.id.action_resultsFragment_to_tasksFragment, bundle)
         }
 
-        view.btn_addKeyResult.setOnClickListener {
+        binding.btnAddKeyResult.setOnClickListener {
             val dialog = KeyResultAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)

@@ -1,5 +1,6 @@
 package net.it96.enfoque.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
@@ -8,12 +9,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import net.it96.enfoque.database.*
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 
 /**
  * Clase para observar cambios en los datos
  */
 class ProjectViewModel(private val projectRepository : ProjectRepository, private val param : String) : ViewModel() {
+
+    private val TAG = "ProjectViewModel"
 
     val getProjectList = liveData(Dispatchers.IO) {
         emit(Resource.Loading())
@@ -23,7 +25,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING PROJECT LIST")
+            Log.e(TAG,"***MZP*** ERROR GETTING PROJECT LIST")
         }
     }
 
@@ -35,7 +37,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING GOALS LIST: $e")
+            Log.e(TAG, "***MZP*** ERROR GETTING GOALS LIST: $e")
         }
     }
 
@@ -47,7 +49,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING KEY RESULTS LIST: $e")
+            Log.e(TAG, "***MZP*** ERROR GETTING KEY RESULTS LIST: $e")
         }
     }
 
@@ -59,7 +61,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING TASKS LIST: $e")
+            Log.e(TAG, "***MZP*** ERROR GETTING TASKS LIST: $e")
         }
     }
 
@@ -71,7 +73,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING TASKS LIST: $e")
+            Log.e(TAG, "***MZP*** ERROR GETTING TASKS LIST: $e")
         }
     }
 
@@ -83,7 +85,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
             }
         } catch (e: Exception) {
             emit(Resource.Failure(e))
-            Timber.e("***MZP*** ERROR GETTING NOTES LIST: $e")
+            Log.e(TAG, "***MZP*** ERROR GETTING NOTES LIST: $e")
         }
     }
 
@@ -99,6 +101,7 @@ class ProjectViewModel(private val projectRepository : ProjectRepository, privat
 
     fun addGoal(goal: Goal) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.i(TAG, "MZP goal: $goal")
             projectRepository.addGoal(goal)
         }
     }

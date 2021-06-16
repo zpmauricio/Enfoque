@@ -13,11 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_notes.view.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Note
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.databinding.FragmentNotesBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
@@ -36,29 +36,33 @@ class NotesFragment : Fragment() {
 
     private lateinit var adapter: NotesAdapter
 
+    private var _binding: FragmentNotesBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_notes, container, false)
+        _binding = FragmentNotesBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
 
         adapter = NotesAdapter(requireContext(), projectViewModel)
-        recyclerView = view.rv_notes
+        recyclerView = binding.rvNotes
         setupRecyclerView()
 
         // Start process to read from the database
         observeData()
 
-        view.btn_Projects.setOnClickListener {
+        binding.btnProjects.setOnClickListener {
             findNavController().navigate(R.id.action_notesFragment_to_projectListFragment)
         }
 
-        view.btn_addNote.setOnClickListener {
+        binding.btnAddNote.setOnClickListener {
             val dialog = NoteAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)

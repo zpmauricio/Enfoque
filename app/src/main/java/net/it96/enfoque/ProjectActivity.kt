@@ -2,6 +2,7 @@ package net.it96.enfoque
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -14,13 +15,13 @@ import androidx.navigation.ui.*
 import com.firebase.ui.auth.AuthUI
 import com.google.android.material.navigation.NavigationView
 import net.it96.enfoque.databinding.ActivityProjectBinding
-import timber.log.Timber
 
 class ProjectActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration : AppBarConfiguration
     private lateinit var navController: NavController
 
+    private val TAG = "ProjectActivity"
     private var _binding: ActivityProjectBinding? = null
     private val binding get() = _binding!!
 
@@ -41,7 +42,7 @@ class ProjectActivity : AppCompatActivity() {
 //        }
 //        tabLayoutMediator.attach()
 
-        Timber.i("MZP onCreate")
+        Log.i(TAG, "MZP onCreate")
 
         val toolbar : Toolbar = binding.toolbar
         setSupportActionBar(toolbar)
@@ -79,7 +80,10 @@ class ProjectActivity : AppCompatActivity() {
             Toast.makeText(this, "Haz algo!!", Toast.LENGTH_SHORT).show()
             true
         }
-
+        R.id.action_logout -> {
+            signOut()
+            true
+        }
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.

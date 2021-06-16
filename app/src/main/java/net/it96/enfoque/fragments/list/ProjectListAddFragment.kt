@@ -9,11 +9,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import kotlinx.android.synthetic.main.project_add.*
-import kotlinx.android.synthetic.main.project_add.view.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.databinding.ProjectAddBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 
@@ -23,16 +22,20 @@ class ProjectListAddFragment : Fragment() {
     private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(
         ProjectRepositoryImpl(), "") }
 
+    private var _binding: ProjectAddBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.project_add, container, false)
+        _binding = ProjectAddBinding.inflate(inflater, container, false)
+        val view = binding.root
 
 //        mProjectViewModel = ViewModelProvider(this).get(ProjectViewModel::class.java)
 
-        view.addProject_btn.setOnClickListener {
+        binding.addProjectBtn.setOnClickListener {
             insertDataToDatabase()
         }
 
@@ -40,7 +43,7 @@ class ProjectListAddFragment : Fragment() {
     }
 
     private fun insertDataToDatabase() {
-        val projectName = addProjectName.text.toString()
+        val projectName = binding.addProjectName.text.toString()
 //        val rdButton = if (rb_img1.isSelected) {img_project1} else if (rb_img2.isSelected) { img_project2 } else img_project3
 //        val results = addResults.text.toString()
 //        val goals90 = addGoals90.text.toString()
@@ -52,12 +55,13 @@ class ProjectListAddFragment : Fragment() {
 
             if (projectName.isEmpty())
             {
-                addProjectName.error = "Please enter a name"
+                binding.addProjectName.error = "Please enter a name"
                 return
             }
 
             // Create new project
-            val project = Project("", projectName).apply { }
+//            val project = Project(Goal(), KeyResult(), Task(),Note(),"", projectName).apply { }
+            val project = Project(  "", projectName).apply { }
 
             // Call View Model and send the data to be stored
             projectViewModel.addProject(project)

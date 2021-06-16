@@ -1,6 +1,7 @@
 package net.it96.enfoque.fragments.goals
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ class GoalsAdapter(
     private var projectViewModel : ProjectViewModel
 ) : RecyclerView.Adapter<GoalsAdapter.GoalsViewHolder>() {
 
+    private val TAG = "GoalsAdapter"
     private var removedPosition : Int = 0
     private var removedItem : Goal? = null
     var topId : Int = 0
@@ -40,6 +42,8 @@ class GoalsAdapter(
 
     inner class GoalsViewHolder(val binding: GoalRowBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindView(goal: Goal) {
+            Log.i(TAG, "MZP goal: $goal")
+            Log.i(TAG, "MZP goal.id: ${goal.id}")
             binding.txtGoal.text = goal.description
             binding.etxtEditGoal.setText(goal.description)
             if(goal.id.toInt() > topId) topId = goal.id.toInt()

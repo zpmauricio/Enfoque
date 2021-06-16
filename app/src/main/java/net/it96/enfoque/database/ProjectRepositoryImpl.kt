@@ -1,17 +1,18 @@
 package net.it96.enfoque.database
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import net.it96.enfoque.vo.Resource
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -21,6 +22,8 @@ import java.time.format.FormatStyle
  */
 class ProjectRepositoryImpl : ProjectRepository {
 
+    private val TAG = "ProjectRepositoryImpl"
+
     private var firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val user = FirebaseAuth.getInstance().currentUser
 
@@ -28,20 +31,20 @@ class ProjectRepositoryImpl : ProjectRepository {
         firestore.firestoreSettings = FirebaseFirestoreSettings.Builder().build()
     }
 
-    @ExperimentalCoroutinesApi
-    suspend fun getProjectData(document: String) : Flow<Resource<Project>> = callbackFlow {
-        val projectDocument = firestore.collection("projects").document(document)
-        val suscription = projectDocument.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
-            if(documentSnapshot!!.exists()) {
-                val project = documentSnapshot.toObject(Project::class.java)
-                offer(Resource.Success(project!!))
-            } else {
-                channel.close(firebaseFirestoreException?.cause)
-            }
-        }
-
-        awaitClose { suscription.remove() }
-    }
+//    @ExperimentalCoroutinesApi
+//    suspend fun getProjectData(document: String) : Flow<Resource<Project>> = callbackFlow {
+//        val projectDocument = firestore.collection("projects").document(document)
+//        val suscription = projectDocument.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+//            if(documentSnapshot!!.exists()) {
+//                val project = documentSnapshot.toObject(Project::class.java)
+//                offer(Resource.Success(project!!))
+//            } else {
+//                channel.close(firebaseFirestoreException?.cause)
+//            }
+//        }
+//
+//        awaitClose { suscription.remove() }
+//    }
 
     @ExperimentalCoroutinesApi
     override suspend fun getProjectList(): Flow<Resource<List<Project>>> = callbackFlow {
@@ -61,10 +64,15 @@ class ProjectRepositoryImpl : ProjectRepository {
 
     @ExperimentalCoroutinesApi
     override suspend fun getGoalsList(selectedProject: String): Flow<Resource<List<Goal>>> = callbackFlow {
-        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Goals").orderBy("id")
+        val goalsListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Goals").orderBy("id", Query.Direction.DESCENDING)
         val subscription = goalsListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
+                var goal : Goal? = collectionSnapshot.documents[0].toObject(Goal::class.java)
+                Log.i(TAG, "MZP goal: ${goal}")
+                goal = collectionSnapshot.documents[2].toObject(Goal::class.java)
+                Log.i(TAG, "MZP goal: ${goal}")
                 val goalsList = collectionSnapshot.toObjects(Goal::class.java)
+                goalsList.sortBy { goal?.id }
                 offer(Resource.Success(goalsList))
             }
             if(firestoreError != null) {
@@ -93,7 +101,7 @@ class ProjectRepositoryImpl : ProjectRepository {
 
     @ExperimentalCoroutinesApi
     override suspend fun getTasksList(selectedProject: String): Flow<Resource<List<Task>>> = callbackFlow {
-        val tasksListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Tasks")
+        val tasksListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document(selectedProject).collection("Tasks").orderBy("id", Query.Direction.DESCENDING)
         val subscription = tasksListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
             if(!collectionSnapshot!!.isEmpty) {
                 val tasksList = collectionSnapshot.toObjects(Task::class.java)
@@ -113,7 +121,7 @@ class ProjectRepositoryImpl : ProjectRepository {
         val date = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
         val today = date.format(formatter).substring(0, 12)
-        Timber.i("MZP today's date: $today")
+        Log.i(TAG, "MZP today's date: $today")
 //        val todayTasksListCollection = firestore.collection("users").document(user!!.email!!).collection("Projects").document("Focus App").collection("Tasks").whereEqualTo("date", today)
         val todayTasksListCollection = firestore.collectionGroup("Tasks").whereEqualTo("date", today).whereEqualTo("userEmail",user!!.email!!.toString())
         val subscription = todayTasksListCollection.addSnapshotListener { collectionSnapshot, firestoreError ->
@@ -126,7 +134,7 @@ class ProjectRepositoryImpl : ProjectRepository {
                     channel.close(firestoreError.cause)
                 }
             } catch (e: Exception){
-                Timber.i("MZP An error occurred: $firestoreError -- ${e.printStackTrace()}")
+                Log.i(TAG, "MZP An error occurred: $firestoreError -- ${e.printStackTrace()}")
             }
 
         }
@@ -161,26 +169,34 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(project.name)
             .set(project)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Document(Project) saved")
+                Log.i(TAG,"***MZP*** Document(Project) saved")
             }
             .addOnFailureListener {
-                Timber.i("***MZP*** Saved failed")
+                Log.i(TAG,"***MZP*** Saved failed")
             }
     }
 
     override suspend fun addGoal(goal: Goal) {
+        Log.i(TAG, "MZP goal: $goal")
+//        val goalToAdd = hashMapOf(
+//            "id" to goal.id,
+//            "description" to goal.description,
+//            "projectName" to goal.projectName
+//        )
         firestore.collection("users")
+
             .document(user!!.email!!)
             .collection("Projects")
             .document(goal.projectName)
             .collection("Goals")
             .document(goal.id)
+//            .set(goalToAdd)
             .set(goal)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Goal saved")
+                Log.i(TAG,"***MZP*** Goal saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG,"***MZP*** Saved failed")
             }
     }
 
@@ -193,10 +209,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(keyResult.id)
             .set(keyResult)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Key Result saved")
+                Log.i(TAG, "***MZP*** Key Result saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -209,10 +225,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(task.id)
             .set(task)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Task saved")
+                Log.i(TAG, "***MZP*** Task saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -225,10 +241,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(note.id)
             .set(note)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Note saved")
+                Log.i(TAG, "***MZP*** Note saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -245,10 +261,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(goal.id)
             .set(goal)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Goal saved")
+                Log.i(TAG, "***MZP*** Goal saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -261,10 +277,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(keyResult.id)
             .set(keyResult)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Key Result saved")
+                Log.i(TAG, "***MZP*** Key Result saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -277,10 +293,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(task.id)
             .set(task)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Task saved")
+                Log.i(TAG, "***MZP*** Task saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 
@@ -293,10 +309,10 @@ class ProjectRepositoryImpl : ProjectRepository {
             .document(note.id)
             .set(note)
             .addOnSuccessListener {
-                Timber.i("***MZP*** Note saved")
+                Log.i(TAG, "***MZP*** Note saved")
             }
             .addOnFailureListener {
-                Timber.e("***MZP*** Saved failed")
+                Log.e(TAG, "***MZP*** Saved failed")
             }
     }
 

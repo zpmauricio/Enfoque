@@ -12,11 +12,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_tasks.view.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
 import net.it96.enfoque.database.Task
+import net.it96.enfoque.databinding.FragmentTasksBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
@@ -38,31 +38,35 @@ class TasksFragment : Fragment() {
 
     private lateinit var adapter: TasksAdapter
 
+    private var _binding: FragmentTasksBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_tasks, container, false)
+        _binding = FragmentTasksBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
 
         adapter = TasksAdapter(requireContext(), projectViewModel)
-        recyclerView = view.rv_tasks
+        recyclerView = binding.rvTasks
         setupRecyclerView()
 
         // Start process to read from the database
         observeData()
 
-        view.btn_Notes.setOnClickListener {
+        binding.btnNotes.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             findNavController().navigate(R.id.action_tasksFragment_to_notesFragment, bundle)
         }
 
-        view.fab_tasks.setOnClickListener {
+        binding.fabTasks.setOnClickListener {
             val dialog = TaskAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)

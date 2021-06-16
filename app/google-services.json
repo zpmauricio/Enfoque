@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "427718235882-e0ajftpbq1mp05scd4aahl28nol4vn9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.it96.enfoque",
+            "certificate_hash": "cad5af17727a570720a578c65a3fd111388dc8b6"
+          }
+        },
+        {
           "client_id": "427718235882-m84022vqu3jd4n9s6a5v4taubgrecthj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

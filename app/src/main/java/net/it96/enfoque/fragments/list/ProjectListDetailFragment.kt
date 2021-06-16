@@ -31,6 +31,7 @@ import net.it96.enfoque.vo.Resource
 
 class ProjectListDetailFragment : Fragment() {
 
+    private val TAG = "ProjectListDetailFragment"
     private lateinit var goalsRecyclerView: RecyclerView
     private lateinit var resultsRecyclerView: RecyclerView
     private lateinit var tasksRecyclerView: RecyclerView
@@ -65,9 +66,9 @@ class ProjectListDetailFragment : Fragment() {
         val view = binding.root
 
         requireArguments().let {
-//            Timber.i("***MZP*** requireArguments")
-//            Timber.i("***MZP*** it: ${it}")
-//            Timber.i("***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
+//            Log.i(TAG, "***MZP*** requireArguments")
+//            Log.i(TAG, "***MZP*** it: ${it}")
+//            Log.i(TAG, "***MZP*** it: ${it.getParcelable<Project>("Project")!!.name}")
 //            view.txt_projectName.text = it.getParcelable<Project>("Project")!!.name
             selectedProject = it.getParcelable("Project")!!
         }
@@ -97,6 +98,8 @@ class ProjectListDetailFragment : Fragment() {
         clickListeners()
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title = selectedProject.name
+
+//        setHasOptionsMenu(true)
 
         return view
     }
@@ -274,6 +277,10 @@ class ProjectListDetailFragment : Fragment() {
             }
         })
     }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        menu.findItem(R.id.action_logout).isVisible = false
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

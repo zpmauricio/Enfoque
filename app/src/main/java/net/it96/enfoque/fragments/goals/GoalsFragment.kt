@@ -13,11 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_goals.view.*
 import net.it96.enfoque.R
 import net.it96.enfoque.database.Goal
 import net.it96.enfoque.database.Project
 import net.it96.enfoque.database.ProjectRepositoryImpl
+import net.it96.enfoque.databinding.FragmentGoalsBinding
 import net.it96.enfoque.viewmodels.ProjectViewModel
 import net.it96.enfoque.viewmodels.ViewModelFactory
 import net.it96.enfoque.vo.Resource
@@ -39,31 +39,35 @@ class GoalsFragment : Fragment() {
 
     private lateinit var adapter: GoalsAdapter
 
+    private var _binding: FragmentGoalsBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_goals, container, false)
+        _binding = FragmentGoalsBinding.inflate(inflater, container, false)
+        val view = binding.root
 
         requireArguments().let {
             selectedProject = it.getParcelable("Project")!!
         }
 
         adapter = GoalsAdapter(requireContext(), projectViewModel)
-        recyclerView = view.rv_goal
+        recyclerView = binding.rvGoal
         setupRecyclerView()
 
         // Start process to read from the database
         observeData()
 
-        view.btn_keyResults.setOnClickListener {
+        binding.btnKeyResults.setOnClickListener {
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)
             findNavController().navigate(R.id.action_ninetyDayGoalsFragment_to_resultsFragment, bundle)
         }
 
-        view.btn_addGoal.setOnClickListener {
+        binding.btnAddGoal.setOnClickListener {
             val dialog = GoalAddFragment()
             val bundle = Bundle()
             bundle.putParcelable("Project", selectedProject)

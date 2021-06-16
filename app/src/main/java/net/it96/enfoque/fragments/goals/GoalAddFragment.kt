@@ -2,6 +2,7 @@ package net.it96.enfoque.fragments.goals
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +20,10 @@ import net.it96.enfoque.viewmodels.ViewModelFactory
 
 class GoalAddFragment : DialogFragment() {
 
+    private val TAG = "GoalAddFragment"
     private val projectViewModel by viewModels<ProjectViewModel> { ViewModelFactory(ProjectRepositoryImpl(), "") }
-
     private lateinit var selectedProject: Project
-
     private lateinit var binding: AddGoalBinding
-
     private var topId : Int = 0
 
     override fun onCreateView(
@@ -67,6 +66,7 @@ class GoalAddFragment : DialogFragment() {
             }
 
             // Create new goal
+            Log.i(TAG, "MZP topId: $topId")
             val goal = Goal("${topId + 1}", newGoal, selectedProject.name).apply {  }
 
             projectViewModel.addGoal(goal)

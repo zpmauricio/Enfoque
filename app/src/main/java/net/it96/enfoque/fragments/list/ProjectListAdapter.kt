@@ -27,33 +27,21 @@ class ProjectListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-//        val view = LayoutInflater.from(context).inflate(R.layout.project_row, parent, false)
         val itemBinding = ProjectRowBinding.inflate(LayoutInflater.from(context), parent, false)
-        val holder = ProjectViewHolder(itemBinding)
-        return holder
-//        return view
-//        return ProjectViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.project_row, parent, false))
+        return ProjectViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: ProjectViewHolder, position: Int) {
         val currentItem = projectData[position]
-//        holder.itemView.projectId_txt.text = currentItem.id.toString()
-//        holder.itemView.projectName_txt.text = currentItem.name
-//        holder.itemView.projectResults_txt.text = currentItem.results
-//        holder.itemView.projectGoals90_txt.text = currentItem.goals90
         holder.bindView(currentItem)
     }
 
     override fun getItemCount(): Int = projectData.size
 
-//    inner class ProjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     inner class ProjectViewHolder(val binding: ProjectRowBinding) : RecyclerView.ViewHolder(binding.root) {
          fun bindView(project: Project) = with(binding) {
             Glide.with(context).load(project.imageUrl).centerCrop().into( projectImage)
-//            itemView.projectId_txt.text = project.id
             projectNameTxt.text = project.name
-//            itemView.projectResults_txt.text = project.results
-//            itemView.projectGoals90_txt.text = project.goals90
             binding.root.setOnClickListener { itemClickListener?.onProjectClick(project) }
         }
     }
